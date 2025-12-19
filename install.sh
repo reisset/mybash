@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MyBash V2 Installer
-# Sets up Ghostty, Starship, Yazi, and modern CLI tools.
+# Sets up Kitty, Starship, Yazi, and modern CLI tools.
 
 set -e
 
@@ -72,7 +72,8 @@ fi
 
 # Deps
 if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null; then
-    if $USE_SUDO; then
+    if $USE_SUDO;
+        then
         sudo apt update && sudo apt install -y curl unzip fontconfig git
     else
         log_warn "Ensure 'curl', 'unzip', 'git', and 'fontconfig' are installed."
@@ -171,32 +172,52 @@ install_from_github() {
 # 2. Tools
 # --------------------------------------------------------------------------
 
-# Ghostty (Optional)
-if ! command -v ghostty &> /dev/null; then
-    if $USE_SUDO; then
-        # Default to NO for Ghostty
-        if confirm_no "Install Ghostty Terminal via Snap (Optional, GPU-accelerated)?"; then
-             sudo snap install ghostty --classic
+# Kitty (Optional)
+if ! command -v kitty &> /dev/null; then
+    if confirm "Install Kitty Terminal (GPU-accelerated, fast)?"; then
+        log_info "Installing Kitty from official script..."
+        
+        # Download installer to temp file (Security: No pipe to shell)
+        kitty_installer="/tmp/kitty_installer.sh"
+        if curl -L "https://sw.kovidgoyal.net/kitty/installer.sh" -o "$kitty_installer"; then
+            chmod +x "$kitty_installer"
+            
+            # Run installer with launch=n to prevent auto-start
+            "$kitty_installer" launch=n
+            
+            # Symlink kitty and kitten to local bin
+            ln -sf ~/.local/kitty.app/bin/kitty "$LOCAL_BIN/kitty"
+            ln -sf ~/.local/kitty.app/bin/kitten "$LOCAL_BIN/kitten"
+            
+            # Desktop Integration
+            cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+            # Fix icon path in desktop file
+            sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty.desktop
+            # Ensure Exec path is correct
+            sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/bin/kitty|g" ~/.local/share/applications/kitty.desktop
+            
+            log_info "Kitty installed successfully."
+            rm -f "$kitty_installer"
+        else
+            log_error "Failed to download Kitty installer."
         fi
-    else
-        log_warn "Skipping Ghostty (requires sudo/snap)."
     fi
 else
-    log_info "Ghostty is already installed."
+    log_info "Kitty is already installed."
 fi
 
-# Set Ghostty as Default Terminal (Only if installed)
-if command -v ghostty &> /dev/null && $USE_SUDO; then
-    if confirm_no "Set Ghostty as default terminal?"; then
-        if ! update-alternatives --list x-terminal-emulator | grep -q "ghostty"; then
-            sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$(command -v ghostty)" 50
+# Set Kitty as Default Terminal (Only if installed)
+if command -v kitty &> /dev/null && $USE_SUDO; then
+    if confirm_no "Set Kitty as default terminal?"; then
+        if ! update-alternatives --list x-terminal-emulator | grep -q "kitty"; then
+            sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$(command -v kitty)" 50
         fi
-        sudo update-alternatives --set x-terminal-emulator "$(command -v ghostty)"
+        sudo update-alternatives --set x-terminal-emulator "$(command -v kitty)"
         
         if command -v gsettings &> /dev/null; then
-             gsettings set org.gnome.desktop.default-applications.terminal exec "$(command -v ghostty)"
+             gsettings set org.gnome.desktop.default-applications.terminal exec "$(command -v kitty)"
         fi
-        log_info "Ghostty set as default."
+        log_info "Kitty set as default."
     fi
 fi
 
@@ -204,7 +225,7 @@ fi
 if ! command -v starship &> /dev/null; then
     if confirm "Install Starship?"; then
         log_info "Downloading Starship installer..."
-        local starship_installer="/tmp/starship_install.sh"
+        starship_installer="/tmp/starship_install.sh"
 
         # Download the installer script
         if ! curl -sS https://starship.rs/install.sh -o "$starship_installer"; then
@@ -234,7 +255,7 @@ if $USE_SUDO; then
         sudo mkdir -p /etc/apt/keyrings
 
         # Download GPG key to temporary location first
-        local eza_gpg_tmp="/tmp/eza_gierens.asc"
+        eza_gpg_tmp="/tmp/eza_gierens.asc"
         if ! wget -qO "$eza_gpg_tmp" https://raw.githubusercontent.com/eza-community/eza/main/deb.asc; then
             log_error "Failed to download eza GPG key"
         else
@@ -278,11 +299,11 @@ fi
 log_info "Linking Configurations..."
 
 if [ -d "$HOME/.config" ]; then
-    # Only link Ghostty config if it's actually installed
-    if command -v ghostty &> /dev/null; then
-        mkdir -p "$HOME/.config/ghostty"
-        ln -sf "$CONFIGS_DIR/ghostty.config" "$HOME/.config/ghostty/config"
-        log_info "Linked Ghostty config."
+    # Kitty Config
+    if command -v kitty &> /dev/null; then
+        mkdir -p "$HOME/.config/kitty"
+        ln -sf "$CONFIGS_DIR/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+        log_info "Linked Kitty config."
     fi
     
     # Always link Starship
@@ -302,4 +323,4 @@ else
 fi
 
 log_info "Installation Complete! Restart your shell."
-log_warn "IMPORTANT: To see icons, set your terminal font to 'JetBrainsMono Nerd Font' manually in Preferences!"
+log_warn "IMPORTANT: To see icons, set your terminal font to 'JetBrainsMono Nerd Font' (or MesloLGS) manually if not using Kitty."

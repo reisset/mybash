@@ -15,9 +15,10 @@ A high-performance, opinionated Bash environment configuration for Linux (Ubuntu
   - Auto-`ls` when changing directories.
   - `y` wrapper for Yazi to change the shell's working directory on exit.
   - Common shortcuts (`..`, `...`, `gs`, `ga`, etc.).
-- **Ghostty Terminal (Optional):**
-  - Configured for performance and aesthetics.
-  - Includes `Adwaita Dark` theme and window controls.
+- **Kitty Terminal (Optional):**
+  - GPU-accelerated, fast, and highly configurable.
+  - Configured with **Tokyo Night** theme.
+  - Includes font settings for **JetBrainsMono** (default) and **MesloLGS** Nerd Fonts.
   - Installer allows choosing it as the default terminal.
 
 ## Installation
@@ -46,7 +47,7 @@ A high-performance, opinionated Bash environment configuration for Linux (Ubuntu
     ```bash
     ./install.sh
     ```
-4.  **Important:** After installation, open your terminal preferences (whether Ptyxis, GNOME Terminal, or Ghostty) and set the font to **JetBrainsMono Nerd Font** to ensure icons render correctly.
+4.  After installation, open your terminal preferences and set the font to **JetBrainsMono Nerd Font** (Or any other Nerd Font) to ensure icons render correctly.
 
 ### Security Features
 
@@ -64,15 +65,7 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 - **Aliases:** Edit `scripts/aliases.sh`.
 - **Bash Logic:** Edit `scripts/bashrc_custom.sh`.
 - **Prompt:** Edit `configs/starship_text.toml`.
-- **Ghostty:** Edit `configs/ghostty.config` (symlinked to `~/.config/ghostty/config`).
-
-## Project Structure
-
-- `install.sh`: Main setup script (Architecture detection, Sudo handling, Symlinking)
-- `configs/`: Configuration files for Starship and Ghostty
-- `scripts/`: Modular Bash scripts sourced by your `.bashrc`
-- `SECURITY.md`: Security policy and best practices
-- `LICENSE`: MIT License
+- **Kitty:** Edit `configs/kitty.conf` (symlinked to `~/.config/kitty/kitty.conf`).
 
 ## License
 

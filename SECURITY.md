@@ -1,10 +1,6 @@
 # Security Policy
 
-## Overview
-
 MyBash V2 is a Bash environment configuration tool that downloads and installs third-party software from the internet. This document outlines the security measures implemented and considerations for users.
-
-## Security Measures Implemented
 
 ### 1. URL Validation
 All downloads from GitHub are validated to ensure:
@@ -34,17 +30,6 @@ All downloads from GitHub are validated to ensure:
 
 ## Security Considerations for Users
 
-### Before Installation
-
-1. **Review the Code**: Always review `install.sh` and other scripts before running them
-2. **Understand Dependencies**: This installer downloads software from:
-   - GitHub releases (official repositories)
-   - Official package repositories (apt)
-   - Starship.rs (official Starship installer)
-   - deb.gierens.de (eza community repository)
-
-3. **Check Your Environment**: Ensure you're installing on a system you control
-
 ### Trust Chain
 
 This installer relies on the security of:
@@ -65,33 +50,6 @@ This installer relies on the security of:
 1. **Checksum Availability**: Not all GitHub releases provide checksums
 2. **GPG Key Distribution**: GPG keys are fetched from the same sources as the software
 3. **Third-Party Trust**: Security depends on the security of upstream projects
-
-## Reporting Security Issues
-
-If you discover a security vulnerability in MyBash V2:
-
-1. **DO NOT** open a public issue
-2. Email the maintainer with:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
-
-## Version Support
-
-Security updates will be provided for:
-- Latest version on main branch
-- Previous release (if applicable)
-
-## Security Best Practices for Contributors
-
-If you contribute to this project:
-
-1. **Never commit secrets**: No API keys, passwords, or tokens
-2. **Validate inputs**: Always validate user inputs and external data
-3. **Use secure downloads**: HTTPS only, validate sources
-4. **Document security implications**: Note security considerations in PR descriptions
-5. **Test error conditions**: Ensure errors fail safely
 
 ## Audit History
 
