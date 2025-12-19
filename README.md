@@ -2,6 +2,9 @@
 
 A high-performance, opinionated Bash environment configuration for Linux (Ubuntu/Debian).
 
+## Preview
+<img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-31" src="https://github.com/user-attachments/assets/916a35c9-85f1-4d9f-ab87-59a2a15a87bb" />
+
 ## Features
 
 - **Starship Prompt:** Beautiful, informative, and fast prompt with Git status, language versions, and execution time.
@@ -17,11 +20,14 @@ A high-performance, opinionated Bash environment configuration for Linux (Ubuntu
   - `y` wrapper for Yazi to change directory on exit.
   - `tools` command for quick reference to modern tools.
 
-- **Kitty Terminal (Optional):**
+- **Kitty Terminal (Optional but recommended):**
   - GPU-accelerated, fast, and highly configurable.
   - Configured with **Tokyo Night** theme.
   - Includes font settings for **JetBrainsMono** (default) and **MesloLGS** Nerd Fonts.
   - Installer allows choosing it as the default terminal.
+    
+<img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-56" src="https://github.com/user-attachments/assets/7d2685b9-5fc8-483c-9545-25b34e79e350" />
+
 
 ## Installation
 
