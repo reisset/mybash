@@ -1,0 +1,31 @@
+# Backup files
+*.bak
+*~
+.*.swp
+.*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+._*
+
+# Local overrides and secrets
+*.local
+.env
+.env.*
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Log files
+*.log
+
+# User-specific configurations (if any)
+local/

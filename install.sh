@@ -79,14 +79,44 @@ if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null; then
     fi
 fi
 
+# Helper function to verify SHA256 checksum
+verify_checksum() {
+    local file=$1
+    local expected_checksum=$2
+
+    if [ -z "$expected_checksum" ]; then
+        log_warn "No checksum provided for verification (skipping)"
+        return 0
+    fi
+
+    if ! command -v sha256sum &> /dev/null; then
+        log_warn "sha256sum not available (skipping checksum verification)"
+        return 0
+    fi
+
+    local actual_checksum
+    actual_checksum=$(sha256sum "$file" | cut -d ' ' -f 1)
+
+    if [ "$actual_checksum" != "$expected_checksum" ]; then
+        log_error "Checksum verification failed!"
+        log_error "Expected: $expected_checksum"
+        log_error "Got: $actual_checksum"
+        return 1
+    fi
+
+    log_info "Checksum verified successfully"
+    return 0
+}
+
 # Helper for GitHub Releases
 install_from_github() {
     local repo=$1
     local binary_name=$2
     local match_pattern=$3
-    
+    local expected_checksum=$4  # Optional: SHA256 checksum for verification
+
     log_info "Installing $binary_name from GitHub ($repo)..."
-    
+
     local latest_url
     latest_url=$(curl -s "https://api.github.com/repos/$repo/releases/latest" | \
         grep "browser_download_url" | \
@@ -98,8 +128,24 @@ install_from_github() {
         return 1
     fi
 
+    # Security: Validate URL is from GitHub and uses HTTPS
+    if [[ ! "$latest_url" =~ ^https://github\.com/ ]]; then
+        log_error "Security: Invalid or non-GitHub URL detected: $latest_url"
+        return 1
+    fi
+
     log_info "Downloading $latest_url..."
-    curl -L -o "/tmp/$binary_name.archive" "$latest_url"
+    if ! curl -L -o "/tmp/$binary_name.archive" "$latest_url"; then
+        log_error "Failed to download $binary_name"
+        return 1
+    fi
+
+    # Verify checksum if provided
+    if ! verify_checksum "/tmp/$binary_name.archive" "$expected_checksum"; then
+        rm -f "/tmp/$binary_name.archive"
+        log_error "Aborting installation due to checksum mismatch"
+        return 1
+    fi
 
     if [[ "$latest_url" == *.tar.gz ]]; then
         tar -xzf "/tmp/$binary_name.archive" -C "/tmp/"
@@ -157,7 +203,18 @@ fi
 # Starship
 if ! command -v starship &> /dev/null; then
     if confirm "Install Starship?"; then
-        curl -sS https://starship.rs/install.sh | sh -s -- -y $(! $USE_SUDO && echo "-b $LOCAL_BIN")
+        log_info "Downloading Starship installer..."
+        local starship_installer="/tmp/starship_install.sh"
+
+        # Download the installer script
+        if ! curl -sS https://starship.rs/install.sh -o "$starship_installer"; then
+            log_error "Failed to download Starship installer"
+        else
+            # Make it executable and run it
+            chmod +x "$starship_installer"
+            "$starship_installer" -y $(! $USE_SUDO && echo "-b $LOCAL_BIN")
+            rm -f "$starship_installer"
+        fi
     fi
 fi
 
@@ -175,11 +232,21 @@ if $USE_SUDO; then
     if ! command -v eza &> /dev/null; then
         log_info "Installing Eza setup..."
         sudo mkdir -p /etc/apt/keyrings
-        wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg --yes
-        echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
-        sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
-        sudo apt update
-        sudo apt install -y eza
+
+        # Download GPG key to temporary location first
+        local eza_gpg_tmp="/tmp/eza_gierens.asc"
+        if ! wget -qO "$eza_gpg_tmp" https://raw.githubusercontent.com/eza-community/eza/main/deb.asc; then
+            log_error "Failed to download eza GPG key"
+        else
+            # Import and verify the key
+            sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg --yes < "$eza_gpg_tmp"
+            rm -f "$eza_gpg_tmp"
+
+            echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
+            sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+            sudo apt update
+            sudo apt install -y eza
+        fi
     fi
     
     # Common tools
