@@ -71,12 +71,12 @@ if confirm "Do you want to use sudo for system-wide installs (recommended)?"; th
 fi
 
 # Deps
-if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null; then
+if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null || ! command -v bzip2 &> /dev/null; then
     if $USE_SUDO;
         then
-        sudo apt update && sudo apt install -y curl unzip fontconfig git
+        sudo apt update && sudo apt install -y curl unzip fontconfig git bzip2 tar wget
     else
-        log_warn "Ensure 'curl', 'unzip', 'git', and 'fontconfig' are installed."
+        log_warn "Ensure 'curl', 'unzip', 'git', 'fontconfig', 'bzip2', 'tar', and 'wget' are installed."
     fi
 fi
 
@@ -150,13 +150,26 @@ install_from_github() {
 
     if [[ "$latest_url" == *.tar.gz ]]; then
         tar -xzf "/tmp/$binary_name.archive" -C "/tmp/"
+    elif [[ "$latest_url" == *.tar.bz2 || "$latest_url" == *.tbz ]]; then
+        tar -xjf "/tmp/$binary_name.archive" -C "/tmp/"
+    elif [[ "$latest_url" == *.tar.xz ]]; then
+        tar -xJf "/tmp/$binary_name.archive" -C "/tmp/"
     elif [[ "$latest_url" == *.zip ]]; then
         unzip -o "/tmp/$binary_name.archive" -d "/tmp/$binary_name-extracted"
+    else
+        # Assume it's a single binary
+        mv "/tmp/$binary_name.archive" "/tmp/$binary_name"
+        chmod +x "/tmp/$binary_name"
     fi
 
-    # Find binary
+    # Find binary (be more flexible with names like binary-linux-x86_64)
     local bin_path
     bin_path=$(find /tmp -type f -name "$binary_name" -perm -u+x | head -n 1)
+    
+    # If not found exactly, try finding something that starts with the name and is executable
+    if [ -z "$bin_path" ]; then
+        bin_path=$(find /tmp -type f -name "$binary_name*" -perm -u+x | head -n 1)
+    fi
 
     if [ -n "$bin_path" ]; then
         mv "$bin_path" "$LOCAL_BIN/"
@@ -289,6 +302,102 @@ else
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
         ~/.fzf/install --bin
         ln -sf ~/.fzf/bin/fzf "$LOCAL_BIN/fzf"
+    fi
+fi
+
+# --------------------------------------------------------------------------
+# 2.5 Modern CLI Tools (Learning-First)
+# --------------------------------------------------------------------------
+
+log_info "Installing Modern CLI Tools (Learning-First)..."
+
+if $USE_SUDO; then
+    # APT Installations (where available)
+    sudo apt install -y tealdeer btop fd-find git-delta
+    
+    # Symlink fd if installed via apt
+    if command -v fdfind &> /dev/null; then
+        ln -sf "$(which fdfind)" "$LOCAL_BIN/fd"
+    fi
+
+    # GPU Monitor (NVTOP)
+    if lspci 2>/dev/null | grep -iE 'vga|3d|display' | grep -qvE 'intel.*integrated'; then
+        if confirm "Discrete GPU detected. Install nvtop?"; then
+            sudo apt install -y nvtop
+        fi
+    fi
+fi
+
+# Zoxide
+[ ! -x "$LOCAL_BIN/zoxide" ] && install_from_github "ajeetdsouza/zoxide" "zoxide" "$ARCH.*linux-musl.tar.gz"
+
+# Btop
+if ! command -v btop &> /dev/null; then
+    install_from_github "aristocratos/btop" "btop" "$ARCH.*linux-musl.tbz"
+fi
+
+# Tealdeer (tldr)
+if ! command -v tldr &> /dev/null; then
+    tealdeer_arch="$ARCH"
+    [[ "$ARCH" == "aarch64" ]] && tealdeer_arch="arm64"
+    install_from_github "dbrgn/tealdeer" "tldr" "tealdeer-linux-$tealdeer_arch-musl"
+fi
+
+# Dust
+[ ! -x "$LOCAL_BIN/dust" ] && install_from_github "bootandy/dust" "dust" "$ARCH.*linux-musl.tar.gz"
+
+# FD (Fallback)
+if ! command -v fd &> /dev/null && ! command -v fdfind &> /dev/null; then
+    install_from_github "sharkdp/fd" "fd" "$ARCH.*linux-musl.tar.gz"
+fi
+
+# Delta (Fallback)
+if ! command -v delta &> /dev/null; then
+    install_from_github "dandavison/delta" "delta" "$ARCH.*linux-gnu.tar.gz"
+fi
+
+# Lazygit
+if ! command -v lazygit &> /dev/null; then
+    lazygit_arch="$ARCH"
+    [[ "$ARCH" == "aarch64" ]] && lazygit_arch="arm64"
+    install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_${lazygit_arch}"
+fi
+
+# Procs
+[ ! -x "$LOCAL_BIN/procs" ] && install_from_github "dalance/procs" "procs" "$ARCH-linux.zip"
+
+# Bandwhich
+if [ ! -x "$LOCAL_BIN/bandwhich" ]; then
+    install_from_github "imsnif/bandwhich" "bandwhich" "$ARCH.*linux-musl.tar.gz"
+    if [ -x "$LOCAL_BIN/bandwhich" ] && $USE_SUDO; then
+        if confirm "Allow bandwhich to sniff network without sudo? (Uses setcap)"; then
+            sudo setcap cap_sys_ptrace,cap_dac_read_search,cap_net_raw,cap_net_admin+ep "$LOCAL_BIN/bandwhich"
+        fi
+    fi
+fi
+
+# Hyperfine
+[ ! -x "$LOCAL_BIN/hyperfine" ] && install_from_github "sharkdp/hyperfine" "hyperfine" "$ARCH.*linux-gnu.tar.gz"
+
+# Tokei
+if ! command -v tokei &> /dev/null; then
+    install_from_github "XAMPPRocky/tokei" "tokei" "$ARCH.*linux-musl.tar.gz"
+    # Cargo fallback if github fails (unlikely but safe)
+    if ! command -v tokei &> /dev/null && command -v cargo &> /dev/null; then
+        log_info "Tokei GitHub install failed, trying cargo..."
+        cargo install tokei --root "$HOME/.local"
+    fi
+fi
+
+# Copy TOOLS.md to local share for 'tools' alias
+mkdir -p "$HOME/.local/share/mybash"
+cp "$REPO_DIR/docs/TOOLS.md" "$HOME/.local/share/mybash/TOOLS.md"
+
+# Git Delta Configuration
+if command -v delta &> /dev/null; then
+    if confirm "Configure git to use delta for diffs?"; then
+        git config --global include.path "$CONFIGS_DIR/delta.gitconfig"
+        log_info "Delta git configuration enabled."
     fi
 fi
 

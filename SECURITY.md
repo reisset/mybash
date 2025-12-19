@@ -59,6 +59,14 @@ This installer relies on the security of:
   - Fixed curl pipe-to-shell pattern
   - Improved GPG key handling
   - Added comprehensive security documentation
+- **2025-12-19**: Kitty Terminal Migration (v2.0)
+  - Replaced Snap-based Ghostty with official Kitty binary installer.
+  - Verified Kitty installation script URLs and checksum patterns.
+- **2025-12-19**: Modern CLI Tools Expansion (v2.1)
+  - Added 12 new tools with GitHub binary installations and URL validation.
+  - Implemented `setcap` configuration for `bandwhich` (requires user confirmation).
+  - Added git configuration include for `delta`.
+  - Conditional GPU detection for `nvtop` (APT-only).
 
 ## Additional Resources
 

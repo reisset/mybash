@@ -5,16 +5,18 @@ A high-performance, opinionated Bash environment configuration for Linux (Ubuntu
 ## Features
 
 - **Starship Prompt:** Beautiful, informative, and fast prompt with Git status, language versions, and execution time.
-- **Modern Tools:**
-  - `eza` (replaces `ls`) - Colorful, icon-rich file listing.
-  - `bat` (replaces `cat`) - Syntax highlighting and git integration.
-  - `rg` (replaces `grep`) - Blazingly fast search.
-  - `fzf` - Fuzzy history search (Ctrl+R).
-  - `yazi` - Terminal file manager with directory navigation.
-- **Smart Aliases:**
+- **Learning-First Toolset**:
+  - **Standard Commands Preserved**: `cd`, `du`, `find`, and `ps` remain untouched for muscle memory.
+  - **Modern Superpowers**: Adds `zoxide` (z), `dust`, `fd`, and `procs` (px) as supplementary tools.
+  - **Core Enhancements**: `eza` (ls), `bat` (cat), `rg` (grep), and `fzf` for a modern CLI experience.
+  - **Interactive TUI**: `lazygit` (lg) for Git and `btop` for system monitoring.
+- **Enhanced FZF**: Rich previews using `bat` and `eza` when searching files.
+- **Git Delta**: Beautiful, syntax-highlighted git diffs with Tokyo Night theme.
+- **Smart Aliases**:
   - Auto-`ls` when changing directories.
-  - `y` wrapper for Yazi to change the shell's working directory on exit.
-  - Common shortcuts (`..`, `...`, `gs`, `ga`, etc.).
+  - `y` wrapper for Yazi to change directory on exit.
+  - `tools` command for quick reference to modern tools.
+
 - **Kitty Terminal (Optional):**
   - GPU-accelerated, fast, and highly configurable.
   - Configured with **Tokyo Night** theme.
