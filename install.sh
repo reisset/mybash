@@ -379,13 +379,32 @@ fi
 # Hyperfine
 [ ! -x "$LOCAL_BIN/hyperfine" ] && install_from_github "sharkdp/hyperfine" "hyperfine" "$ARCH.*linux-gnu.tar.gz"
 
-# Tokei
+# Tokei (Note: v13.0.0 has no binaries, using v12.1.2)
 if ! command -v tokei &> /dev/null; then
-    install_from_github "XAMPPRocky/tokei" "tokei" "$ARCH.*linux-musl.tar.gz"
-    # Cargo fallback if github fails (unlikely but safe)
-    if ! command -v tokei &> /dev/null && command -v cargo &> /dev/null; then
-        log_info "Tokei GitHub install failed, trying cargo..."
-        cargo install tokei --root "$HOME/.local"
+    log_info "Installing tokei from GitHub (XAMPPRocky/tokei v12.1.2)..."
+
+    # Determine tokei architecture pattern
+    tokei_arch="$ARCH"
+    tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-${tokei_arch}-unknown-linux-musl.tar.gz"
+
+    log_info "Downloading $tokei_url..."
+    if curl -L -o "/tmp/tokei.archive" "$tokei_url"; then
+        tar -xzf "/tmp/tokei.archive" -C "/tmp/"
+        if [ -f "/tmp/tokei" ]; then
+            chmod +x "/tmp/tokei"
+            mv "/tmp/tokei" "$LOCAL_BIN/tokei"
+            log_info "Installed tokei to $LOCAL_BIN"
+        else
+            log_error "Binary tokei not found after extraction."
+        fi
+        rm -f "/tmp/tokei.archive"
+    else
+        log_error "Failed to download tokei"
+        # Cargo fallback if github fails
+        if command -v cargo &> /dev/null; then
+            log_info "Tokei GitHub install failed, trying cargo..."
+            cargo install tokei --root "$HOME/.local"
+        fi
     fi
 fi
 
