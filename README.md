@@ -1,6 +1,6 @@
 # MyBash V2
 
-A high-performance, opinionated Bash environment configuration for Linux (Ubuntu/Debian).
+A high-performance, opinionated Bash environment configuration for Linux (I use Ubuntu/Debian). It promotes new linux users (me) to learn basic commands but adds new modern tools in there as well. 
 
 ## Preview
 <img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-31" src="https://github.com/user-attachments/assets/916a35c9-85f1-4d9f-ab87-59a2a15a87bb" />
@@ -33,18 +33,16 @@ A high-performance, opinionated Bash environment configuration for Linux (Ubuntu
 
 ### Before Installing
 
-**IMPORTANT**: This installer downloads and executes third-party software from the internet. Please review the following before proceeding:
+This installer downloads and executes third-party software from the internet. Review the code before proceeding:
 
 - Review `install.sh` and understand what it does
-- Run only on systems you trust and control
-- Ensure you're on a secure network
-- Consider backing up your existing `.bashrc` and config files
+- Consider backing up your existing `.bashrc` and config files (to be automated in new versions)
 
 ### Install Steps
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/mybash.git
+    git clone https://github.com/reisset/mybash.git
     cd mybash
     ```
 2.  **Review the installer script**:
@@ -61,7 +59,6 @@ A high-performance, opinionated Bash environment configuration for Linux (Ubuntu
 
 MyBash V2 implements several security measures:
 - **URL Validation**: All GitHub downloads are validated for HTTPS and correct domain
-- **Checksum Verification**: Optional SHA256 verification for downloaded binaries
 - **No Pipe-to-Shell**: External scripts are downloaded and inspected before execution
 - **GPG Key Verification**: Package repository keys are handled securely
 - **Sudo Confirmation**: Explicit user consent required for privileged operations
