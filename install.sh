@@ -21,6 +21,24 @@ SERVER_MODE=false
 USE_SUDO=false
 ARCH=$(uname -m)
 
+# Helper Functions
+log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+
+confirm() {
+    echo -ne "${YELLOW}[?] $1 (Y/n) ${NC}"
+    read -r response
+    [[ "$response" =~ ^[Nn]$ ]] && return 1
+    return 0
+}
+
+confirm_no() {
+    echo -ne "${YELLOW}[?] $1 (y/N) ${NC}"
+    read -r response
+    [[ "$response" =~ ^[Yy]$ ]]
+}
+
 # Parse arguments
 for arg in "$@"; do
     case $arg in
@@ -64,7 +82,7 @@ if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null || ! comman
     else
         log_warn "Ensure 'curl', 'unzip', 'git', 'fontconfig', 'bzip2', 'tar', and 'wget' are installed."
     fi
-}
+fi
 
 # Helper for GitHub Releases
 install_from_github() {
@@ -92,7 +110,7 @@ install_from_github() {
     fi
 
     log_info "Downloading $latest_url..."
-    if ! curl -L -o "/tmp/$binary_name.archive" "$latest_url"; then
+    if ! curl -fL -o "/tmp/$binary_name.archive" "$latest_url"; then
         log_error "Failed to download $binary_name"
         return 1
     fi
@@ -293,7 +311,7 @@ fi
 # Nerdfetch
 if [ ! -x "$LOCAL_BIN/nerdfetch" ]; then
     log_info "Installing nerdfetch..."
-    if curl -L https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch -o "$LOCAL_BIN/nerdfetch"; then
+    if curl -fL https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch -o "$LOCAL_BIN/nerdfetch"; then
         chmod +x "$LOCAL_BIN/nerdfetch"
         log_info "nerdfetch installed."
     else
@@ -360,7 +378,7 @@ if ! command -v tokei &> /dev/null; then
     tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-${tokei_arch}-unknown-linux-musl.tar.gz"
 
     log_info "Downloading $tokei_url..."
-    if curl -L -o "/tmp/tokei.archive" "$tokei_url"; then
+    if curl -fL -o "/tmp/tokei.archive" "$tokei_url"; then
         tar -xzf "/tmp/tokei.archive" -C "/tmp/"
         if [ -f "/tmp/tokei" ]; then
             chmod +x "/tmp/tokei"

@@ -32,3 +32,7 @@ local/
 
 # Development edits
 editlog.md
+
+# Local documentation (private)
+TODOlist.txt
+featuresuggestions.txt
