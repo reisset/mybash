@@ -17,40 +17,26 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # State
+SERVER_MODE=false
 USE_SUDO=false
 ARCH=$(uname -m)
 
-log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
-log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
-
-confirm() {
-    read -r -p "$1 [Y/n] " response
-    case "$response" in
-        [yY][eE][sS]|[yY]|"") return 0 ;;
-        *)
-            return 1 ;;
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        --server)
+            SERVER_MODE=true
+            shift
+            ;;
     esac
-}
-
-confirm_no() {
-    read -r -p "$1 [y/N] " response
-    case "$response" in
-        [yY][eE][sS]|[yY]) return 0 ;;
-        *)
-            return 1 ;;
-    esac
-}
-
-# Ensure local bin exists
-mkdir -p "$LOCAL_BIN"
-export PATH="$LOCAL_BIN:$PATH"
-
-# --------------------------------------------------------------------------
-# 1. Initialization
-# --------------------------------------------------------------------------
+done
 
 log_info "Initializing MyBash V2 Installer..."
+if $SERVER_MODE; then
+    log_info "Mode: Server/Headless (Skipping desktop tools)"
+else
+    log_info "Mode: Full Desktop"
+fi
 
 if [[ "$ARCH" == "x86_64" ]]; then
     log_info "Detected Architecture: x86_64"
@@ -78,35 +64,6 @@ if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null || ! comman
     else
         log_warn "Ensure 'curl', 'unzip', 'git', 'fontconfig', 'bzip2', 'tar', and 'wget' are installed."
     fi
-fi
-
-# Helper function to verify SHA256 checksum
-verify_checksum() {
-    local file=$1
-    local expected_checksum=$2
-
-    if [ -z "$expected_checksum" ]; then
-        log_warn "No checksum provided for verification (skipping)"
-        return 0
-    fi
-
-    if ! command -v sha256sum &> /dev/null; then
-        log_warn "sha256sum not available (skipping checksum verification)"
-        return 0
-    fi
-
-    local actual_checksum
-    actual_checksum=$(sha256sum "$file" | cut -d ' ' -f 1)
-
-    if [ "$actual_checksum" != "$expected_checksum" ]; then
-        log_error "Checksum verification failed!"
-        log_error "Expected: $expected_checksum"
-        log_error "Got: $actual_checksum"
-        return 1
-    fi
-
-    log_info "Checksum verified successfully"
-    return 0
 }
 
 # Helper for GitHub Releases
@@ -114,7 +71,6 @@ install_from_github() {
     local repo=$1
     local binary_name=$2
     local match_pattern=$3
-    local expected_checksum=$4  # Optional: SHA256 checksum for verification
 
     log_info "Installing $binary_name from GitHub ($repo)..."
 
@@ -138,13 +94,6 @@ install_from_github() {
     log_info "Downloading $latest_url..."
     if ! curl -L -o "/tmp/$binary_name.archive" "$latest_url"; then
         log_error "Failed to download $binary_name"
-        return 1
-    fi
-
-    # Verify checksum if provided
-    if ! verify_checksum "/tmp/$binary_name.archive" "$expected_checksum"; then
-        rm -f "/tmp/$binary_name.archive"
-        log_error "Aborting installation due to checksum mismatch"
         return 1
     fi
 
@@ -186,51 +135,53 @@ install_from_github() {
 # --------------------------------------------------------------------------
 
 # Kitty (Optional)
-if ! command -v kitty &> /dev/null; then
-    if confirm "Install Kitty Terminal (GPU-accelerated, fast)?"; then
-        log_info "Installing Kitty from official script..."
-        
-        # Download installer to temp file (Security: No pipe to shell)
-        kitty_installer="/tmp/kitty_installer.sh"
-        if curl -L "https://sw.kovidgoyal.net/kitty/installer.sh" -o "$kitty_installer"; then
-            chmod +x "$kitty_installer"
+if ! $SERVER_MODE; then
+    if ! command -v kitty &> /dev/null; then
+        if confirm "Install Kitty Terminal (GPU-accelerated, fast)?"; then
+            log_info "Installing Kitty from official script..."
             
-            # Run installer with launch=n to prevent auto-start
-            "$kitty_installer" launch=n
-            
-            # Symlink kitty and kitten to local bin
-            ln -sf ~/.local/kitty.app/bin/kitty "$LOCAL_BIN/kitty"
-            ln -sf ~/.local/kitty.app/bin/kitten "$LOCAL_BIN/kitten"
-            
-            # Desktop Integration
-            cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
-            # Fix icon path in desktop file
-            sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty.desktop
-            # Ensure Exec path is correct
-            sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/bin/kitty|g" ~/.local/share/applications/kitty.desktop
-            
-            log_info "Kitty installed successfully."
-            rm -f "$kitty_installer"
-        else
-            log_error "Failed to download Kitty installer."
+            # Download installer to temp file (Security: No pipe to shell)
+            kitty_installer="/tmp/kitty_installer.sh"
+            if curl -L "https://sw.kovidgoyal.net/kitty/installer.sh" -o "$kitty_installer"; then
+                chmod +x "$kitty_installer"
+                
+                # Run installer with launch=n to prevent auto-start
+                "$kitty_installer" launch=n
+                
+                # Symlink kitty and kitten to local bin
+                ln -sf ~/.local/kitty.app/bin/kitty "$LOCAL_BIN/kitty"
+                ln -sf ~/.local/kitty.app/bin/kitten "$LOCAL_BIN/kitten"
+                
+                # Desktop Integration
+                cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+                # Fix icon path in desktop file
+                sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty.desktop
+                # Ensure Exec path is correct
+                sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/bin/kitty|g" ~/.local/share/applications/kitty.desktop
+                
+                log_info "Kitty installed successfully."
+                rm -f "$kitty_installer"
+            else
+                log_error "Failed to download Kitty installer."
+            fi
         fi
+    else
+        log_info "Kitty is already installed."
     fi
-else
-    log_info "Kitty is already installed."
-fi
 
-# Set Kitty as Default Terminal (Only if installed)
-if command -v kitty &> /dev/null && $USE_SUDO; then
-    if confirm_no "Set Kitty as default terminal?"; then
-        if ! update-alternatives --list x-terminal-emulator | grep -q "kitty"; then
-            sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$(command -v kitty)" 50
+    # Set Kitty as Default Terminal (Only if installed)
+    if command -v kitty &> /dev/null && $USE_SUDO; then
+        if confirm_no "Set Kitty as default terminal?"; then
+            if ! update-alternatives --list x-terminal-emulator | grep -q "kitty"; then
+                sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$(command -v kitty)" 50
+            fi
+            sudo update-alternatives --set x-terminal-emulator "$(command -v kitty)"
+            
+            if command -v gsettings &> /dev/null; then
+                 gsettings set org.gnome.desktop.default-applications.terminal exec "$(command -v kitty)"
+            fi
+            log_info "Kitty set as default."
         fi
-        sudo update-alternatives --set x-terminal-emulator "$(command -v kitty)"
-        
-        if command -v gsettings &> /dev/null; then
-             gsettings set org.gnome.desktop.default-applications.terminal exec "$(command -v kitty)"
-        fi
-        log_info "Kitty set as default."
     fi
 fi
 
@@ -321,15 +272,34 @@ if $USE_SUDO; then
     fi
 
     # GPU Monitor (NVTOP)
-    if lspci 2>/dev/null | grep -iE 'vga|3d|display' | grep -qvE 'intel.*integrated'; then
-        if confirm "Discrete GPU detected. Install nvtop?"; then
-            sudo apt install -y nvtop
+    if ! $SERVER_MODE; then
+        if lspci 2>/dev/null | grep -iE 'vga|3d|display' | grep -qvE 'intel.*integrated'; then
+            if confirm "Discrete GPU detected. Install nvtop?"; then
+                sudo apt install -y nvtop
+            fi
         fi
     fi
 fi
 
 # Zoxide
 [ ! -x "$LOCAL_BIN/zoxide" ] && install_from_github "ajeetdsouza/zoxide" "zoxide" "$ARCH.*linux-musl.tar.gz"
+
+# Glow
+[ ! -x "$LOCAL_BIN/glow" ] && install_from_github "charmbracelet/glow" "glow" "$ARCH.*.tar.gz"
+
+# Gping
+[ ! -x "$LOCAL_BIN/gping" ] && install_from_github "orf/gping" "gping" "$ARCH.*linux-musl.tar.gz"
+
+# Nerdfetch
+if [ ! -x "$LOCAL_BIN/nerdfetch" ]; then
+    log_info "Installing nerdfetch..."
+    if curl -L https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch -o "$LOCAL_BIN/nerdfetch"; then
+        chmod +x "$LOCAL_BIN/nerdfetch"
+        log_info "nerdfetch installed."
+    else
+        log_error "Failed to download nerdfetch."
+    fi
+fi
 
 # Btop
 if ! command -v btop &> /dev/null; then
@@ -357,10 +327,12 @@ if ! command -v delta &> /dev/null; then
 fi
 
 # Lazygit
-if ! command -v lazygit &> /dev/null; then
-    lazygit_arch="$ARCH"
-    [[ "$ARCH" == "aarch64" ]] && lazygit_arch="arm64"
-    install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_${lazygit_arch}"
+if ! $SERVER_MODE; then
+    if ! command -v lazygit &> /dev/null; then
+        lazygit_arch="$ARCH"
+        [[ "$ARCH" == "aarch64" ]] && lazygit_arch="arm64"
+        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_${lazygit_arch}"
+    fi
 fi
 
 # Procs
@@ -428,7 +400,7 @@ log_info "Linking Configurations..."
 
 if [ -d "$HOME/.config" ]; then
     # Kitty Config
-    if command -v kitty &> /dev/null; then
+    if ! $SERVER_MODE && command -v kitty &> /dev/null; then
         mkdir -p "$HOME/.config/kitty"
         ln -sf "$CONFIGS_DIR/kitty.conf" "$HOME/.config/kitty/kitty.conf"
         log_info "Linked Kitty config."

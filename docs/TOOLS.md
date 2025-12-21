@@ -36,6 +36,8 @@ MyBash V2.1 adds powerful modern tools but **does not replace** the originals.
 | **bandwhich** | `bandwhich` | See which process is using your bandwidth in real-time. |
 | **hyperfine** | `benchmark` | Benchmark command execution speed. |
 | **tokei** | `cloc` | Statistics about your code lines, comments, and languages. |
+| **glow** | `glow` | Render markdown in the terminal. |
+| **gping** | `gping` | Ping with a live graph. |
 
 ---
 

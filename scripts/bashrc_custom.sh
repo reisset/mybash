@@ -55,9 +55,16 @@ fi
 
 # 9. Learning Mode Indicator (show on shell start)
 if [[ $- == *i* ]]; then
+    # Run nerdfetch if in Kitty
+    if [[ "$TERM" == "xterm-kitty" ]] || [ -n "$KITTY_PID" ]; then
+        if command -v nerdfetch &> /dev/null; then
+            nerdfetch
+        fi
+    fi
+
     if [ -z "$MYBASH_WELCOME_SHOWN" ]; then
         echo -e "\033[1;36m📚 MyBash V2 - Learning Mode Active\033[0m"
-        echo -e "\033[0;90mNew tools: z/zi, tldr, btop, dust, fd, delta, lg\033[0m"
+        echo -e "\033[0;90mNew tools: z/zi, tldr, btop, dust, fd, delta, lg, glow, gping\033[0m"
         echo -e "\033[0;90mOriginal commands (cd, du, find, ps) still work! Type 'tools' for quick reference.\033[0m"
         export MYBASH_WELCOME_SHOWN=1
     fi

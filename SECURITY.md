@@ -9,7 +9,6 @@ All downloads from GitHub are validated to ensure:
 - Prevents arbitrary URL injection attacks
 
 ### 2. Download Integrity
-- **Checksum Verification**: Optional SHA256 checksum verification for downloaded files
 - **GPG Key Handling**: GPG keys are downloaded to temporary locations before import
 - **Error Handling**: Failed downloads abort the installation process
 
@@ -41,24 +40,24 @@ This installer relies on the security of:
 ### Recommended Practices
 
 1. **Run on Trusted Networks**: Avoid running installer on untrusted/public networks
-2. **Inspect Downloads**: Optionally verify checksums manually for critical tools
-3. **Use Dedicated User**: Consider using a dedicated user account for testing
-4. **Backup First**: Backup existing `.bashrc` and config files before installation
+2. **Use Dedicated User**: Consider using a dedicated user account for testing
+3. **Backup First**: Backup existing `.bashrc` and config files before installation
 
 ## Known Limitations
 
-1. **Checksum Availability**: Not all GitHub releases provide checksums
-2. **GPG Key Distribution**: GPG keys are fetched from the same sources as the software
-3. **Third-Party Trust**: Security depends on the security of upstream projects
+1. **GPG Key Distribution**: GPG keys are fetched from the same sources as the software
+2. **Third-Party Trust**: Security depends on the security of upstream projects
 
 ## Audit History
 
 - **2025-12-19**: Initial security audit and hardening
   - Added URL validation
-  - Implemented checksum verification
   - Fixed curl pipe-to-shell pattern
   - Improved GPG key handling
   - Added comprehensive security documentation
+- **2025-12-20**: Cleanup and Simplification
+  - Removed checksum verification (high maintenance, low reliability)
+  - Added server/headless installation mode
 - **2025-12-19**: Kitty Terminal Migration (v2.0)
   - Replaced Snap-based Ghostty with official Kitty binary installer.
   - Verified Kitty installation script URLs and checksum patterns.

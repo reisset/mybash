@@ -10,7 +10,7 @@ A high-performance, opinionated Bash environment configuration for Linux (I use 
 - **Starship Prompt:** Beautiful, informative, and fast prompt with Git status, language versions, and execution time.
 - **Learning-First Toolset**:
   - **Standard Commands Preserved**: `cd`, `du`, `find`, and `ps` remain untouched for muscle memory.
-  - **Modern Superpowers**: Adds `zoxide` (z), `dust`, `fd`, and `procs` (px) as supplementary tools.
+  - **Modern Superpowers**: Adds `zoxide` (z), `dust`, `fd`, `procs` (px), `glow`, and `gping` as supplementary tools.
   - **Core Enhancements**: `eza` (ls), `bat` (cat), `rg` (grep), and `fzf` for a modern CLI experience.
   - **Interactive TUI**: `lazygit` (lg) for Git and `btop` for system monitoring.
 - **Enhanced FZF**: Rich previews using `bat` and `eza` when searching files.
@@ -19,10 +19,11 @@ A high-performance, opinionated Bash environment configuration for Linux (I use 
   - Auto-`ls` when changing directories.
   - `y` wrapper for Yazi to change directory on exit.
   - `tools` command for quick reference to modern tools.
+- **Nerdfetch**: System information on shell start (Kitty only).
 
 - **Kitty Terminal (Optional but recommended):**
   - GPU-accelerated, fast, and highly configurable.
-  - Configured with **Tokyo Night** theme.
+  - Configured with **Tokyo Night** theme and **0.90 opacity**.
   - Includes font settings for **JetBrainsMono** (default) and **MesloLGS** Nerd Fonts.
   - Installer allows choosing it as the default terminal.
     
@@ -36,7 +37,7 @@ A high-performance, opinionated Bash environment configuration for Linux (I use 
 This installer downloads and executes third-party software from the internet. Review the code before proceeding:
 
 - Review `install.sh` and understand what it does
-- Consider backing up your existing `.bashrc` and config files (to be automated in new versions)
+- Consider backing up your existing `.bashrc` and config files
 
 ### Install Steps
 
@@ -51,7 +52,8 @@ This installer downloads and executes third-party software from the internet. Re
     ```
 3.  Run the installer:
     ```bash
-    ./install.sh
+    ./install.sh           # Full desktop install
+    ./install.sh --server  # Headless/server install (skips Kitty, lazygit, nvtop)
     ```
 4.  After installation, open your terminal preferences and set the font to **JetBrainsMono Nerd Font** (Or any other Nerd Font) to ensure icons render correctly.
 
