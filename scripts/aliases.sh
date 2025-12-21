@@ -12,10 +12,7 @@ else
   alias l='ls -CF'
 fi
 
-# Ripgrep
-if command -v rg &> /dev/null; then
-  alias grep='rg'
-fi
+# Ripgrep (use 'rg' directly - grep alias moved to POWER MODE below)
 
 # Bat (modern cat)
 if command -v batcat &> /dev/null; then
@@ -79,4 +76,5 @@ alias tools='cat ~/.local/share/mybash/TOOLS.md 2>/dev/null || cat ~/mybash/docs
 # alias du='dust'
 # alias find='fd'
 # alias ps='procs'
+# alias grep='rg'
 # ==============================================================================

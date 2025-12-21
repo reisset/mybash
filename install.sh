@@ -115,37 +115,42 @@ install_from_github() {
         return 1
     fi
 
+    # Use dedicated extraction directory for clean cleanup
+    local extract_dir="/tmp/$binary_name-extracted"
+    mkdir -p "$extract_dir"
+
     if [[ "$latest_url" == *.tar.gz ]]; then
-        tar -xzf "/tmp/$binary_name.archive" -C "/tmp/"
+        tar -xzf "/tmp/$binary_name.archive" -C "$extract_dir"
     elif [[ "$latest_url" == *.tar.bz2 || "$latest_url" == *.tbz ]]; then
-        tar -xjf "/tmp/$binary_name.archive" -C "/tmp/"
+        tar -xjf "/tmp/$binary_name.archive" -C "$extract_dir"
     elif [[ "$latest_url" == *.tar.xz ]]; then
-        tar -xJf "/tmp/$binary_name.archive" -C "/tmp/"
+        tar -xJf "/tmp/$binary_name.archive" -C "$extract_dir"
     elif [[ "$latest_url" == *.zip ]]; then
-        unzip -o "/tmp/$binary_name.archive" -d "/tmp/$binary_name-extracted"
+        unzip -o "/tmp/$binary_name.archive" -d "$extract_dir"
     else
         # Assume it's a single binary
-        mv "/tmp/$binary_name.archive" "/tmp/$binary_name"
-        chmod +x "/tmp/$binary_name"
+        mv "/tmp/$binary_name.archive" "$extract_dir/$binary_name"
+        chmod +x "$extract_dir/$binary_name"
     fi
 
-    # Find binary (be more flexible with names like binary-linux-x86_64)
+    # Find binary in extraction directory
     local bin_path
-    bin_path=$(find /tmp -type f -name "$binary_name" -perm -u+x | head -n 1)
-    
-    # If not found exactly, try finding something that starts with the name and is executable
+    bin_path=$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)
+
+    # If not found exactly, try finding something that starts with the name
     if [ -z "$bin_path" ]; then
-        bin_path=$(find /tmp -type f -name "$binary_name*" -perm -u+x | head -n 1)
+        bin_path=$(find "$extract_dir" -type f -name "$binary_name*" | head -n 1)
     fi
 
     if [ -n "$bin_path" ]; then
+        chmod +x "$bin_path"
         mv "$bin_path" "$LOCAL_BIN/"
         log_info "Installed $binary_name to $LOCAL_BIN"
     else
         log_error "Binary $binary_name not found after extraction."
     fi
-    
-    rm -rf "/tmp/$binary_name.archive" "/tmp/$binary_name-extracted"
+
+    rm -rf "/tmp/$binary_name.archive" "$extract_dir"
 }
 
 # --------------------------------------------------------------------------
@@ -282,7 +287,8 @@ log_info "Installing Modern CLI Tools (Learning-First)..."
 
 if $USE_SUDO; then
     # APT Installations (where available)
-    sudo apt install -y tealdeer btop fd-find git-delta
+    # Note: git-delta not included - uses GitHub fallback for broader compatibility
+    sudo apt install -y tealdeer btop fd-find
     
     # Symlink fd if installed via apt
     if command -v fdfind &> /dev/null; then
@@ -311,7 +317,12 @@ fi
 # Nerdfetch
 if [ ! -x "$LOCAL_BIN/nerdfetch" ]; then
     log_info "Installing nerdfetch..."
-    if curl -fL https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch -o "$LOCAL_BIN/nerdfetch"; then
+    nerdfetch_url="https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch"
+
+    # Security: Validate URL is from GitHub raw content
+    if [[ ! "$nerdfetch_url" =~ ^https://raw\.githubusercontent\.com/ ]]; then
+        log_error "Security: Invalid nerdfetch URL: $nerdfetch_url"
+    elif curl -fL "$nerdfetch_url" -o "$LOCAL_BIN/nerdfetch"; then
         chmod +x "$LOCAL_BIN/nerdfetch"
         log_info "nerdfetch installed."
     else
@@ -349,7 +360,7 @@ if ! $SERVER_MODE; then
     if ! command -v lazygit &> /dev/null; then
         lazygit_arch="$ARCH"
         [[ "$ARCH" == "aarch64" ]] && lazygit_arch="arm64"
-        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_${lazygit_arch}"
+        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_Linux_${lazygit_arch}\.tar\.gz$"
     fi
 fi
 
