@@ -18,7 +18,13 @@ fi
 
 # 4. FZF
 if command -v fzf &> /dev/null; then
-    eval "$(fzf --bash)" 2>/dev/null || source /usr/share/doc/fzf/examples/key-bindings.bash 2>/dev/null || true
+    # Check if fzf supports --bash flag (newer versions)
+    if fzf --bash &>/dev/null; then
+        eval "$(fzf --bash)"
+    else
+        # Fallback for older fzf versions
+        source /usr/share/doc/fzf/examples/key-bindings.bash 2>/dev/null || true
+    fi
 fi
 
 # 5. Yazi (Shell Wrapper to allow cwd change)

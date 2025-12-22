@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **CRITICAL: Install script exits early and doesn't configure .bashrc**: Fixed lazygit download pattern
+  - Two issues: (1) Pattern used "Linux" instead of "linux", (2) Pattern ended with `$` anchor
+  - The `$` anchor failed because JSON lines end with `"` not `.tar.gz`
+  - This caused install_from_github to fail, and with `set -e`, the entire script exited
+  - Script never reached .bashrc configuration or manifest generation
+  - Changed pattern from `lazygit_.*_Linux_${lazygit_arch}\.tar\.gz$` to `lazygit_.*_linux_${lazygit_arch}\.tar\.gz`
+  - Install now completes successfully and properly configures .bashrc
+
+- **CRITICAL: Ctrl+Alt+T keyboard shortcut broken after uninstall**: Script now restores default terminal
+  - Checks if Kitty is set as default via update-alternatives
+  - Checks if Kitty is set as default via GNOME gsettings
+  - Restores gnome-terminal as default **before** removing Kitty binary
+  - Prevents Ubuntu's terminal shortcut (Ctrl+Alt+T) from failing silently
+  - Users prompted to confirm terminal restoration
+
+- **uninstall.sh hanging issue**: Script now properly cleans up shell environment
+  - Unsets PROMPT_COMMAND to prevent deleted starship from being called
+  - Resets PS1 to basic prompt before script exits
+  - Prevents infinite "No such file or directory" errors when starship binary is removed
+  - Users can now exit cleanly without force-closing terminal
+
+- **Kitty not set as default terminal after install**: Fixed install.sh logic for setting default terminal
+  - Previous logic only set Kitty as default if installed to /usr/* (system-wide)
+  - Kitty is installed to ~/.local/bin/ (user-local), so check always failed
+  - Now separates update-alternatives (for system installs) from GNOME gsettings (works for all)
+  - GNOME settings method works for both system and user-local Kitty installations
+  - Ctrl+Alt+T now launches Kitty after installation completes
+
+- **"unknown option: --bash" error on terminal startup**: Fixed FZF initialization in bashrc_custom.sh
+  - Older fzf versions don't support the --bash flag
+  - Error was displayed despite stderr redirect because eval tried to execute error text
+  - Now checks if fzf supports --bash before using it
+  - Falls back to traditional key-bindings.bash source for older versions
+  - Error message no longer appears on terminal startup
+
 ## [2.2.0] - 2025-12-22
 
 ### Added

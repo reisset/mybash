@@ -84,8 +84,40 @@ if git config --global --get include.path 2>/dev/null | grep -q "delta.gitconfig
     fi
 fi
 
-# Step 4: Ask about installed binaries
-log_info "Step 3: Installed binaries in ~/.local/bin"
+# Step 4: Restore default terminal (before removing Kitty)
+log_info "Step 4: Checking default terminal configuration"
+TERMINAL_RESTORED=false
+
+# Check if Kitty is set as default via update-alternatives
+if update-alternatives --query x-terminal-emulator 2>/dev/null | grep -qi "kitty"; then
+    if confirm "Kitty is set as default terminal. Restore gnome-terminal as default?"; then
+        if command -v gnome-terminal &> /dev/null; then
+            sudo update-alternatives --set x-terminal-emulator /usr/bin/gnome-terminal.wrapper 2>/dev/null || \
+            sudo update-alternatives --set x-terminal-emulator /usr/bin/gnome-terminal 2>/dev/null || \
+            log_warn "Could not restore gnome-terminal via update-alternatives"
+            TERMINAL_RESTORED=true
+            log_info "Restored gnome-terminal as default terminal (update-alternatives)"
+        else
+            log_warn "gnome-terminal not found - you may need to manually set a default terminal"
+        fi
+    fi
+fi
+
+# Check if Kitty is set as default via GNOME settings
+if command -v gsettings &> /dev/null; then
+    current_term=$(gsettings get org.gnome.desktop.default-applications.terminal exec 2>/dev/null || echo "")
+    if [[ "$current_term" == *"kitty"* ]]; then
+        if [ "$TERMINAL_RESTORED" = true ] || confirm "Kitty is set in GNOME settings. Restore gnome-terminal?"; then
+            if command -v gnome-terminal &> /dev/null; then
+                gsettings set org.gnome.desktop.default-applications.terminal exec 'gnome-terminal'
+                log_info "Restored gnome-terminal in GNOME settings"
+            fi
+        fi
+    fi
+fi
+
+# Step 5: Ask about installed binaries
+log_info "Step 5: Installed binaries in ~/.local/bin"
 echo ""
 log_warn "The following MyBash-installed tools were found:"
 echo ""
@@ -127,13 +159,13 @@ else
     log_info "No binaries found to remove"
 fi
 
-# Step 5: Remove manifest
+# Step 6: Remove manifest
 if [ -f "$MANIFEST_FILE" ]; then
     rm "$MANIFEST_FILE"
     log_info "Removed installation manifest"
 fi
 
-# Step 6: Remove copied TOOLS.md
+# Step 7: Remove copied TOOLS.md
 if [ -f "$HOME/.local/share/mybash/TOOLS.md" ]; then
     rm -rf "$HOME/.local/share/mybash"
     log_info "Removed ~/.local/share/mybash/"
@@ -151,3 +183,13 @@ log_warn "Note: APT-installed packages (if any) were not removed."
 log_warn "To remove them manually, run:"
 echo "  sudo apt remove eza bat ripgrep fzf btop fd-find"
 echo ""
+
+# Clean up current shell environment to prevent starship errors
+# (The current shell still has starship in PROMPT_COMMAND but the binary was deleted)
+if [[ -n "$PROMPT_COMMAND" ]]; then
+    unset PROMPT_COMMAND
+fi
+# Reset to a basic prompt
+export PS1='\u@\h:\w\$ '
+
+log_info "Shell prompt reset for this session."

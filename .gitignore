@@ -33,3 +33,6 @@ local/
 
 # Local documentation (private)
 CLAUDE.md
+
+# Testing and debugging notes
+debuglog.txt

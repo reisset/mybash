@@ -205,20 +205,27 @@ if ! $SERVER_MODE; then
         log_info "Kitty is already installed."
     fi
 
-    # Set Kitty as Default Terminal (Only if installed system-wide)
-    if command -v kitty &> /dev/null && $USE_SUDO; then
+    # Set Kitty as Default Terminal
+    if command -v kitty &> /dev/null; then
         kitty_path="$(command -v kitty)"
-        # Only attempt if installed to system path (not user-local)
-        if [[ "$kitty_path" == /usr/* ]] && confirm_no "Set Kitty as default terminal?"; then
-            if ! update-alternatives --list x-terminal-emulator | grep -q "kitty"; then
-                sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$kitty_path" 50
+
+        # For system-wide installations, use update-alternatives
+        if [[ "$kitty_path" == /usr/* ]] && $USE_SUDO; then
+            if confirm_no "Set Kitty as default terminal (update-alternatives)?"; then
+                if ! sudo update-alternatives --list x-terminal-emulator 2>/dev/null | grep -q "kitty"; then
+                    sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$kitty_path" 50
+                fi
+                sudo update-alternatives --set x-terminal-emulator "$kitty_path"
+                log_info "Kitty set as default via update-alternatives."
             fi
-            sudo update-alternatives --set x-terminal-emulator "$kitty_path"
-            
-            if command -v gsettings &> /dev/null; then
-                 gsettings set org.gnome.desktop.default-applications.terminal exec "$(command -v kitty)"
+        fi
+
+        # Always set via GNOME settings (works for both system and user installs)
+        if command -v gsettings &> /dev/null; then
+            if confirm_no "Set Kitty as default terminal (GNOME settings)?"; then
+                gsettings set org.gnome.desktop.default-applications.terminal exec 'kitty'
+                log_info "Kitty set as default via GNOME settings."
             fi
-            log_info "Kitty set as default."
         fi
     fi
 fi
@@ -377,7 +384,7 @@ if ! $SERVER_MODE; then
     if ! command -v lazygit &> /dev/null; then
         lazygit_arch="$ARCH"
         [[ "$ARCH" == "aarch64" ]] && lazygit_arch="arm64"
-        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_Linux_${lazygit_arch}\.tar\.gz$"
+        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_${lazygit_arch}\.tar\.gz"
     fi
 fi
 
