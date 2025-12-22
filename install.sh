@@ -192,13 +192,15 @@ if ! $SERVER_MODE; then
         log_info "Kitty is already installed."
     fi
 
-    # Set Kitty as Default Terminal (Only if installed)
+    # Set Kitty as Default Terminal (Only if installed system-wide)
     if command -v kitty &> /dev/null && $USE_SUDO; then
-        if confirm_no "Set Kitty as default terminal?"; then
+        kitty_path="$(command -v kitty)"
+        # Only attempt if installed to system path (not user-local)
+        if [[ "$kitty_path" == /usr/* ]] && confirm_no "Set Kitty as default terminal?"; then
             if ! update-alternatives --list x-terminal-emulator | grep -q "kitty"; then
-                sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$(command -v kitty)" 50
+                sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$kitty_path" 50
             fi
-            sudo update-alternatives --set x-terminal-emulator "$(command -v kitty)"
+            sudo update-alternatives --set x-terminal-emulator "$kitty_path"
             
             if command -v gsettings &> /dev/null; then
                  gsettings set org.gnome.desktop.default-applications.terminal exec "$(command -v kitty)"
@@ -309,15 +311,23 @@ fi
 [ ! -x "$LOCAL_BIN/zoxide" ] && install_from_github "ajeetdsouza/zoxide" "zoxide" "$ARCH.*linux-musl.tar.gz"
 
 # Glow
-[ ! -x "$LOCAL_BIN/glow" ] && install_from_github "charmbracelet/glow" "glow" "$ARCH.*.tar.gz"
+if ! command -v glow &> /dev/null; then
+    glow_arch="$ARCH"
+    [[ "$ARCH" == "aarch64" ]] && glow_arch="arm64"
+    install_from_github "charmbracelet/glow" "glow" "Linux_${glow_arch}\.tar\.gz"
+fi
 
 # Gping
-[ ! -x "$LOCAL_BIN/gping" ] && install_from_github "orf/gping" "gping" "$ARCH.*linux-musl.tar.gz"
+if ! command -v gping &> /dev/null; then
+    gping_arch="$ARCH"
+    [[ "$ARCH" == "aarch64" ]] && gping_arch="arm64"
+    install_from_github "orf/gping" "gping" "Linux-musl-${gping_arch}\.tar\.gz"
+fi
 
 # Nerdfetch
 if [ ! -x "$LOCAL_BIN/nerdfetch" ]; then
     log_info "Installing nerdfetch..."
-    nerdfetch_url="https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch"
+    nerdfetch_url="https://raw.githubusercontent.com/ThatOneCalculator/NerdFetch/main/nerdfetch"
 
     # Security: Validate URL is from GitHub raw content
     if [[ ! "$nerdfetch_url" =~ ^https://raw\.githubusercontent\.com/ ]]; then

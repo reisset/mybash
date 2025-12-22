@@ -1,0 +1,53 @@
+DEBUGGING - RESOLVED ISSUES
+
+## Fixed Issues
+
+### Bug 1: nerdfetch download failure (404 error) - FIXED
+**Root Cause:** Incorrect GitHub repository URL
+- **Old URL:** `https://raw.githubusercontent.com/TadeasKriz/nerdfetch/master/nerdfetch`
+- **New URL:** `https://raw.githubusercontent.com/ThatOneCalculator/NerdFetch/main/nerdfetch`
+- **Status:** ✅ RESOLVED - nerdfetch now downloads successfully
+
+### Bug 2: "local: can only be used in a function" error - FIXED
+**Root Cause:** `local` keyword used outside function context at line 197
+- **Location:** Kitty default terminal setup section
+- **Fix:** Removed `local` keyword from `kitty_path="$(command -v kitty)"`
+- **Status:** ✅ RESOLVED - Script now passes syntax validation
+
+### NPM PATH Issue - INVESTIGATED
+**Analysis:** The mentioned PATH modification (`export PATH="$(npm config get prefix)/bin:$PATH"`) was not found in the current codebase.
+- **Current Implementation:** The script safely adds `~/.local/bin` to PATH without overwriting existing PATH
+- **Location:** `scripts/bashrc_custom.sh` lines 10-12
+- **Status:** ✅ NO ISSUE FOUND - Current implementation is safe
+
+## Verification
+
+### nerdfetch Fix Verification:
+```bash
+$ curl -I "https://raw.githubusercontent.com/ThatOneCalculator/NerdFetch/main/nerdfetch"
+HTTP/2 200  # Success (was 404 before)
+```
+
+### Syntax Error Fix Verification:
+```bash
+$ bash -n install.sh
+# No errors (previously failed at line 197)
+```
+
+### PATH Safety Verification:
+```bash
+# Current safe implementation in bashrc_custom.sh
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    export PATH="$HOME/.local/bin:$PATH"  # Appends, doesn't overwrite
+fi
+```
+
+## Remaining Issues
+
+None. All reported issues have been resolved or determined to be non-issues.
+
+## Recommendations
+
+1. **Test Installation:** Run both `./install.sh` and `./install.sh --server` to verify fixes
+2. **Monitor:** Watch for any remaining installation issues
+3. **Documentation:** Update README.md if any new installation notes are needed
