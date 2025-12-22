@@ -1,6 +1,6 @@
 # MyBash V2
 
-An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. 
+An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory.
 
 ## Preview
 <img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-31" src="https://github.com/user-attachments/assets/916a35c9-85f1-4d9f-ab87-59a2a15a87bb" />
@@ -11,15 +11,14 @@ An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to h
 - **Modern Toolset:** Includes `zoxide` (better cd), `eza` (better ls), `bat`, `fzf`, and `lazygit`, `yazi` (modern TUI file browser).
 - **Muscle Memory Safe:** Standard commands (cd, grep) still work, so you won't get lost.
 - **Look & Feel:** Tokyo Night theme, syntax-highlighted diffs, and smart aliases.
-- **Kitty Terminal:**  [Optional] config with GPU acceleration and Nerd Fonts pre-set. 
-    
-<img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-56" src="https://github.com/user-attachments/assets/7d2685b9-5fc8-483c-9545-25b34e79e350" />
+- **Kitty Terminal:** [Optional] config with GPU acceleration and Nerd Fonts pre-set.
 
+<img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-56" src="https://github.com/user-attachments/assets/7d2685b9-5fc8-483c-9545-25b34e79e350" />
 
 ## Quick Start
 Don't just run random scripts from the internet. Read the code first.
 
-1.  **Clone & Inspect:**
+1. **Clone & Inspect:**
     *(You may need to `sudo apt install git` first)*
     ```bash
     git clone [https://github.com/reisset/mybash.git](https://github.com/reisset/mybash.git)
@@ -27,13 +26,13 @@ Don't just run random scripts from the internet. Read the code first.
     cat install.sh  # Review before running
     ```
 
-2.  **Install:**
+2. **Install:**
     ```bash
     ./install.sh           # Full desktop install
     ./install.sh --server  # Headless/server install (skips Kitty, lazygit, nvtop)
     ```
 
-3.  **Finish Up:**
+3. **Finish Up:**
     Open your terminal settings and select **JetBrainsMono Nerd Font** (the script installs this for you) to ensure icons render correctly.
 
 ### Security
