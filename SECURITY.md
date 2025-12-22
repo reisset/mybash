@@ -9,8 +9,10 @@ All downloads from GitHub are validated to ensure:
 - Prevents arbitrary URL injection attacks
 
 ### 2. Download Integrity
+- **Retry Logic**: All downloads use curl/wget retry mechanisms (5 attempts, 3-second delays)
 - **GPG Key Handling**: GPG keys are downloaded to temporary locations before import
-- **Error Handling**: Failed downloads abort the installation process
+- **Error Handling**: Failed downloads abort the installation process after exhausting retries
+- **Network Resilience**: Handles connection timeouts, DNS failures, and temporary HTTP errors
 
 ### 3. Script Execution Safety
 - **No Direct Piping**: External scripts are downloaded first, then executed (not piped directly to shell)
@@ -66,6 +68,13 @@ This installer relies on the security of:
   - Implemented `setcap` configuration for `bandwhich` (requires user confirmation).
   - Added git configuration include for `delta`.
   - Conditional GPU detection for `nvtop` (APT-only).
+- **2025-12-22**: Reliability and Uninstall Enhancements (v2.2)
+  - Implemented download retry logic across all curl/wget operations
+  - Added install manifest tracking system for safe uninstallation
+  - Created uninstall.sh with timestamped .bashrc backups
+  - Added mybash-doctor for read-only health checks
+  - Removed nerdfetch to improve startup performance
+  - All new scripts follow principle of least privilege
 
 ## Additional Resources
 

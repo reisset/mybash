@@ -187,7 +187,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All new installation steps follow the `SECURITY.md` guidelines regarding URL validation and script execution safety.
 
 
-[Unreleased]: https://github.com/king/mybash/compare/v2.0.1...HEAD
-[2.0.1]: https://github.com/king/mybash/compare/v2.0.0...v2.0.1
-[2.0.0]: https://github.com/king/mybash/compare/v1.0.0...v2.0.0
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/reisset/mybash/compare/v2.0.1...v2.2.0
+[2.0.1]: https://github.com/reisset/mybash/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/reisset/mybash/compare/v1.0.0...v2.0.0
 
