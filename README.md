@@ -1,6 +1,6 @@
 # MyBash V2
 
-An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory.
+An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
 
 ## Preview
 <img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-31" src="https://github.com/user-attachments/assets/916a35c9-85f1-4d9f-ab87-59a2a15a87bb" />
