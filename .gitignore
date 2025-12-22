@@ -30,8 +30,6 @@ temp/
 # User-specific configurations (if any)
 local/
 
-# Development edits
-editlog.md
 
 # Local documentation (private)
 TODOlist.txt

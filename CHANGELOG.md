@@ -51,16 +51,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Checksum Verification**: Removed non-functional checksum verification system
 - **Obsolete Documentation**: Updated SECURITY.md to remove checksum references
 
-## [1.0.0] - 2024-11-15
+## 2025-12-19: Modern CLI Tools Expansion (v2.1)
 
-### Added
+### Major Enhancements
+- **Learning-First Toolset**: Integrated 12 modern CLI tools while preserving standard commands (`cd`, `du`, `find`, `ps`) to maintain muscle memory for vanilla systems.
+- **Enhanced FZF**: Added `bat` and `eza` integration for rich previews during file searching (Ctrl+T).
+- **Git Delta Integration**: Configured `delta` for beautiful, syntax-highlighted git diffs with Tokyo Night theme.
+- **Smart Directory Navigation**: Integrated `zoxide` (`z`/`zi`) for frequency-based directory jumping.
 
-- Initial MyBash V2 release
-- Core installation script with basic tool setup
-- Configuration files for kitty, starship, and delta
-- Custom bash aliases and functions
+### Tool Breakdown
+- **Tier 1 (Core)**: `zoxide`, `tealdeer` (tldr), `btop`, `dust`, `fd`, `delta`, `lazygit`.
+- **Tier 2 (Power)**: `procs` (`px`), `bandwhich`, `hyperfine`, `tokei`.
+- **Tier 3 (GPU)**: `nvtop` (conditional installation).
+
+### File Changes
+- **New**: `docs/TOOLS.md` (Reference guide), `configs/delta.gitconfig`.
+- **Modified**: `install.sh` (Installer logic), `scripts/aliases.sh`, `scripts/bashrc_custom.sh`, `README.md`, `SECURITY.md`.
+
+## 2025-12-19: Transition from Ghostty to Kitty
+
+### Architecture Changes
+- **Terminal Emulator**: Replaced Ghostty (Snap-based) with Kitty (Official binary install).
+  - *Reasoning*: Faster startup times (no Snap overhead), better reproducibility via text-based config, and native GPU acceleration.
+
+### File Changes
+- **Deleted**: `configs/ghostty.config`
+- **Created**: `configs/kitty.conf`
+  - Applied **Tokyo Night** theme.
+  - Configured font rendering for **JetBrainsMono Nerd Font** (default) and **MesloLGS Nerd Font** (optional).
+  - Added `window_padding_width 10` for better aesthetics.
+- **Modified**: `install.sh`
+  - Replaced Snap installation logic with official Kitty installer script.
+  - Implemented secure script download and execution (no pipe-to-shell).
+  - Added desktop integration (icons, .desktop file) and `update-alternatives` support.
+  - **Bug Fix**: Fixed `local` variable scope errors in global context for Kitty, Starship, and Eza installer blocks.
+- **Modified**: `README.md`
+  - Updated Feature list and Customization instructions to reflect Kitty usage.
+
+### Security Compliance
+- All new installation steps follow the `SECURITY.md` guidelines regarding URL validation and script execution safety.
+
 
 [Unreleased]: https://github.com/king/mybash/compare/v2.0.1...HEAD
 [2.0.1]: https://github.com/king/mybash/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/king/mybash/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/king/mybash/releases/tag/v1.0.0
+
