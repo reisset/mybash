@@ -68,6 +68,10 @@ fi
 # Quick Reference
 alias tools='cat ~/.local/share/mybash/TOOLS.md 2>/dev/null || cat ~/mybash/docs/TOOLS.md'
 
+# MyBash utility commands
+alias mybash-tools='bash ~/.local/share/mybash/scripts/mybash-tools.sh 2>/dev/null || bash ~/mybash/scripts/mybash-tools.sh'
+alias mybash-doctor='bash ~/.local/share/mybash/scripts/mybash-doctor.sh 2>/dev/null || bash ~/mybash/scripts/mybash-doctor.sh'
+
 # ==============================================================================
 # OPTIONAL: POWER MODE (Uncomment to replace standard commands)
 # WARNING: This breaks muscle memory for vanilla systems.

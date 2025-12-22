@@ -7,6 +7,101 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2025-12-22
+
+### Added
+
+- **Uninstall Script** (`uninstall.sh`): Complete MyBash removal tool
+  - Interactive prompts for safe removal of all components
+  - Removes configuration symlinks (~/.config/starship.toml, ~/.config/kitty/kitty.conf)
+  - Cleans up ~/.bashrc modifications with automatic backup
+  - Optional removal of installed binaries from ~/.local/bin
+  - Removes git delta configuration
+  - Removes installation manifest file
+
+- **Install Manifest System**: Automatic tracking of all installed files
+  - Generated at ~/.mybash-manifest.txt during installation
+  - Records all symlinks, binaries, and configuration changes
+  - Enables safe, complete uninstallation
+  - Tracks installation mode (desktop vs server)
+
+- **mybash-tools Command**: Interactive tool discovery and reference
+  - Uses glow for beautiful markdown rendering
+  - Fallback to bat or less if glow unavailable
+  - Quick access to complete tool documentation
+  - Helps users discover available modern CLI tools
+
+- **mybash-doctor Command**: Comprehensive health check and diagnostics
+  - Verifies Nerd Fonts installation (font-config check)
+  - Validates PATH configuration
+  - Checks .bashrc integration
+  - Verifies Starship installation and configuration
+  - Tests Zoxide initialization
+  - Scans for modern tool availability (eza, bat, fzf, fd, btop, delta, etc.)
+  - Validates Git Delta configuration
+  - Checks Kitty terminal setup
+  - Provides actionable troubleshooting steps
+
+- **Download Retry Logic**: Robust network error handling
+  - Implements curl --retry flag with 5 automatic retry attempts
+  - 3-second delay between retry attempts
+  - --retry-all-errors flag for comprehensive error coverage
+  - 10-second connection timeout
+  - Applied to all GitHub release downloads
+  - Applied to GPG key downloads
+  - Applied to script installer downloads (Starship, Kitty)
+
+### Changed
+
+- **Welcome Message**: Modernized shell startup message
+  - Removed nerdfetch execution (eliminated startup delay)
+  - Now references mybash-tools for tool discovery
+  - Added mybash-doctor reference for troubleshooting
+  - Cleaner, faster message display
+
+- **Installation Process**: Enhanced reliability and tracking
+  - All downloads now use retry logic
+  - Manifest file generated automatically at end of installation
+  - Better error messages for failed downloads
+
+- **Shell Startup Performance**: Significantly improved
+  - Removed nerdfetch execution (~22ms reduction)
+  - Conditional welcome message (only shows once per session)
+  - No additional overhead from new features (mybash-tools and mybash-doctor are on-demand only)
+
+### Removed
+
+- **Nerdfetch**: Removed from installation and shell startup
+  - Eliminated ~22ms shell startup delay
+  - Removed from install.sh (lines 327-341)
+  - Removed from bashrc_custom.sh (lines 58-63)
+  - Users can manually install fastfetch if desired for system info display
+
+- **Feature Planning Files**: Archived after v2.2 implementation
+  - Deleted featuresplan.txt (implementation complete)
+  - Deleted featuresuggestions.txt (features evaluated and implemented)
+
+### Fixed
+
+- **Network Reliability**: Installations no longer fail on temporary network issues
+  - Automatic retry on connection timeouts
+  - Automatic retry on DNS failures
+  - Automatic retry on temporary HTTP errors
+
+- **Uninstall Process**: Complete, safe cleanup of all MyBash modifications
+  - Properly removes all symlinks
+  - Safely removes bashrc source line with backup
+  - Tracks and removes all installed files
+  - No orphaned configurations left behind
+
+### Security
+
+- **Maintained Security Standards**: All new features follow existing security practices
+  - uninstall.sh creates timestamped .bashrc backups before modifications
+  - mybash-doctor performs read-only checks (no system modifications)
+  - Retry logic doesn't bypass existing URL validation
+  - All new scripts follow principle of least privilege
+
 ## [2.0.1] - 2024-12-21
 
 ### Fixed

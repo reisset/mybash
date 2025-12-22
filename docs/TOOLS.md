@@ -1,6 +1,11 @@
-# 📚 MyBash V2.1 - Modern CLI Tools Guide
+# 📚 MyBash V2.2 - Modern CLI Tools Guide
 
 Welcome to the **Learning-First** toolset. This guide helps you navigate the modern CLI landscape while keeping your traditional Linux skills sharp.
+
+## 💡 Quick Access
+
+- **mybash-tools** - View this guide with pretty formatting (uses glow for beautiful rendering)
+- **mybash-doctor** - Check if your MyBash setup is healthy and troubleshoot issues
 
 ## 🧠 Philosophy: Learning-First
 MyBash V2.1 adds powerful modern tools but **does not replace** the originals.

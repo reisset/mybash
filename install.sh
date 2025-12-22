@@ -110,8 +110,15 @@ install_from_github() {
     fi
 
     log_info "Downloading $latest_url..."
-    if ! curl -fL -o "/tmp/$binary_name.archive" "$latest_url"; then
-        log_error "Failed to download $binary_name"
+    # MODIFIED: Add retry logic with --retry and --retry-delay
+    if ! curl -fL \
+         --retry 5 \
+         --retry-delay 3 \
+         --retry-all-errors \
+         --connect-timeout 10 \
+         -o "/tmp/$binary_name.archive" \
+         "$latest_url"; then
+        log_error "Failed to download $binary_name after 5 retries"
         return 1
     fi
 
@@ -165,7 +172,13 @@ if ! $SERVER_MODE; then
             
             # Download installer to temp file (Security: No pipe to shell)
             kitty_installer="/tmp/kitty_installer.sh"
-            if curl -L "https://sw.kovidgoyal.net/kitty/installer.sh" -o "$kitty_installer"; then
+            if curl -L \
+                 --retry 5 \
+                 --retry-delay 3 \
+                 --retry-all-errors \
+                 --connect-timeout 10 \
+                 "https://sw.kovidgoyal.net/kitty/installer.sh" \
+                 -o "$kitty_installer"; then
                 chmod +x "$kitty_installer"
                 
                 # Run installer with launch=n to prevent auto-start
@@ -217,7 +230,13 @@ if ! command -v starship &> /dev/null; then
         starship_installer="/tmp/starship_install.sh"
 
         # Download the installer script
-        if ! curl -sS https://starship.rs/install.sh -o "$starship_installer"; then
+        if ! curl -sS \
+             --retry 5 \
+             --retry-delay 3 \
+             --retry-all-errors \
+             --connect-timeout 10 \
+             https://starship.rs/install.sh \
+             -o "$starship_installer"; then
             log_error "Failed to download Starship installer"
         else
             # Make it executable and run it
@@ -245,8 +264,12 @@ if $USE_SUDO; then
 
         # Download GPG key to temporary location first
         eza_gpg_tmp="/tmp/eza_gierens.asc"
-        if ! wget -qO "$eza_gpg_tmp" https://raw.githubusercontent.com/eza-community/eza/main/deb.asc; then
-            log_error "Failed to download eza GPG key"
+        if ! wget --tries=5 \
+                  --waitretry=3 \
+                  --timeout=10 \
+                  -qO "$eza_gpg_tmp" \
+                  https://raw.githubusercontent.com/eza-community/eza/main/deb.asc; then
+            log_error "Failed to download eza GPG key after retries"
         else
             # Import and verify the key
             sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg --yes < "$eza_gpg_tmp"
@@ -322,22 +345,6 @@ if ! command -v gping &> /dev/null; then
     gping_arch="$ARCH"
     [[ "$ARCH" == "aarch64" ]] && gping_arch="arm64"
     install_from_github "orf/gping" "gping" "Linux-musl-${gping_arch}\.tar\.gz"
-fi
-
-# Nerdfetch
-if [ ! -x "$LOCAL_BIN/nerdfetch" ]; then
-    log_info "Installing nerdfetch..."
-    nerdfetch_url="https://raw.githubusercontent.com/ThatOneCalculator/NerdFetch/main/nerdfetch"
-
-    # Security: Validate URL is from GitHub raw content
-    if [[ ! "$nerdfetch_url" =~ ^https://raw\.githubusercontent\.com/ ]]; then
-        log_error "Security: Invalid nerdfetch URL: $nerdfetch_url"
-    elif curl -fL "$nerdfetch_url" -o "$LOCAL_BIN/nerdfetch"; then
-        chmod +x "$LOCAL_BIN/nerdfetch"
-        log_info "nerdfetch installed."
-    else
-        log_error "Failed to download nerdfetch."
-    fi
 fi
 
 # Btop
@@ -460,6 +467,53 @@ if ! grep -qF "$SOURCE_LINE" "$HOME/.bashrc"; then
 else
     log_info "bashrc already contains the source line."
 fi
+
+# --------------------------------------------------------------------------
+# 4. Generate Install Manifest
+# --------------------------------------------------------------------------
+
+log_info "Generating installation manifest..."
+
+MANIFEST_FILE="$HOME/.mybash-manifest.txt"
+rm -f "$MANIFEST_FILE"  # Clear old manifest if exists
+
+# Record timestamp
+echo "# MyBash Installation Manifest" >> "$MANIFEST_FILE"
+echo "# Generated: $(date)" >> "$MANIFEST_FILE"
+echo "# Installation Mode: $(if $SERVER_MODE; then echo 'server'; else echo 'desktop'; fi)" >> "$MANIFEST_FILE"
+echo "" >> "$MANIFEST_FILE"
+
+# Track symlinked configs
+echo "# Configuration Symlinks" >> "$MANIFEST_FILE"
+if [ -L "$HOME/.config/starship.toml" ]; then
+    echo "symlink:$HOME/.config/starship.toml" >> "$MANIFEST_FILE"
+fi
+if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
+    echo "symlink:$HOME/.config/kitty/kitty.conf" >> "$MANIFEST_FILE"
+fi
+
+# Track bashrc modification
+if grep -qF "source $SCRIPTS_DIR/bashrc_custom.sh" "$HOME/.bashrc"; then
+    echo "bashrc_line:source $SCRIPTS_DIR/bashrc_custom.sh" >> "$MANIFEST_FILE"
+fi
+
+# Track installed binaries in ~/.local/bin
+echo "" >> "$MANIFEST_FILE"
+echo "# Installed Binaries" >> "$MANIFEST_FILE"
+for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
+              btop dust fd delta lazygit procs bandwhich hyperfine tokei \
+              glow gping tldr; do
+    if [ -x "$LOCAL_BIN/$binary" ]; then
+        echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"
+    fi
+done
+
+# Track git config changes
+if git config --global --get include.path 2>/dev/null | grep -q "delta.gitconfig"; then
+    echo "git_config:include.path=$CONFIGS_DIR/delta.gitconfig" >> "$MANIFEST_FILE"
+fi
+
+log_info "Manifest saved to $MANIFEST_FILE"
 
 log_info "Installation Complete! Restart your shell."
 log_warn "IMPORTANT: To see icons, set your terminal font to 'JetBrainsMono Nerd Font' (or MesloLGS) manually if not using Kitty."

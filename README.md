@@ -51,6 +51,21 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 - **Prompt:** `configs/starship_text.toml`.
 - **Kitty:** `configs/kitty.conf` (symlinked to `~/.config/kitty/kitty.conf`).
 
+## MyBash Commands (V2.2+)
+
+MyBash includes helpful utility commands:
+
+- **mybash-tools** - Browse available modern tools with descriptions (uses glow for pretty rendering)
+- **mybash-doctor** - Run health checks and diagnostics to troubleshoot your setup
+- **uninstall.sh** - Completely remove MyBash from your system
+
+Example:
+```bash
+mybash-tools    # See what tools are available
+mybash-doctor   # Check if everything is working correctly
+./uninstall.sh  # Safely remove MyBash
+```
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
