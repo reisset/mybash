@@ -8,6 +8,7 @@ set -e
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIGS_DIR="$REPO_DIR/configs"
 SCRIPTS_DIR="$REPO_DIR/scripts"
+BIN_DIR="$REPO_DIR/bin"
 LOCAL_BIN="$HOME/.local/bin"
 
 # Colors
@@ -433,9 +434,11 @@ if ! command -v tokei &> /dev/null; then
     fi
 fi
 
-# Copy TOOLS.md to local share for 'tools' alias
+# Copy documentation and scripts to local share for aliases
 mkdir -p "$HOME/.local/share/mybash"
 cp "$REPO_DIR/docs/TOOLS.md" "$HOME/.local/share/mybash/TOOLS.md"
+cp -r "$REPO_DIR/scripts" "$HOME/.local/share/mybash/"
+cp -r "$REPO_DIR/bin" "$HOME/.local/share/mybash/"
 
 # Git Delta Configuration
 if command -v delta &> /dev/null; then

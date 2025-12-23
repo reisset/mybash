@@ -8,6 +8,7 @@ TOOLS_FILE="$HOME/.local/share/mybash/TOOLS.md"
 # Fallback to repo location if not installed
 if [ ! -f "$TOOLS_FILE" ]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Script is now in bin/, so TOOLS.md is in ../docs/
     TOOLS_FILE="$(dirname "$SCRIPT_DIR")/docs/TOOLS.md"
 fi
 

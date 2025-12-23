@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Project Structure Reorganization**: Improved repository clarity by separating standalone tools from internal logic.
+  - Created `bin/` directory for standalone executable tools.
+  - Moved `mybash-doctor.sh` and `mybash-tools.sh` from `scripts/` to `bin/`.
+  - Updated `install.sh` to properly deploy the new `bin/` directory to `~/.local/share/mybash/bin/`.
+  - Updated `scripts/aliases.sh` and internal script references to reflect new paths.
+  - Maintained `scripts/` specifically for internal shell configuration files (`aliases.sh`, `bashrc_custom.sh`).
+
 ### Fixed
 
 - **CRITICAL: Install script exits early and doesn't configure .bashrc**: Fixed lazygit download pattern
