@@ -16,7 +16,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated `scripts/aliases.sh` and internal script references to reflect new paths.
   - Maintained `scripts/` specifically for internal shell configuration files (`aliases.sh`, `bashrc_custom.sh`).
 
+- **FZF Keybindings Now Auto-Enabled**: Changed from opt-in lazy-loading to auto-enable on startup
+  - Ctrl+R (history search) and Ctrl+T (file finder) now work immediately after installation
+  - Keybindings cannot be lazy-loaded since they're handled at readline level, not as shell functions
+  - Adds ~50ms to startup but provides expected behavior for standard Ctrl+R muscle memory
+  - Can be disabled by setting `export MYBASH_DISABLE_FZF=1` before sourcing bashrc
+  - Removed `fzf-enable` command (no longer needed)
+
 ### Fixed
+
+- **ASCII Art Banner Formatting**: Welcome banner now displays cleanly without bat decorations
+  - Changed `cat` to `command cat` in bashrc_custom.sh to bypass bat alias
+  - Previously showed file path, line numbers, and decorative borders from bat
+  - Now displays raw ASCII art as intended
+  - Added blank line between ASCII art and info message for better spacing
 
 - **CRITICAL: Install script exits early and doesn't configure .bashrc**: Fixed lazygit download pattern
   - Two issues: (1) Pattern used "Linux" instead of "linux", (2) Pattern ended with `$` anchor

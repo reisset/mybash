@@ -437,6 +437,7 @@ fi
 # Copy documentation and scripts to local share for aliases
 mkdir -p "$HOME/.local/share/mybash"
 cp "$REPO_DIR/docs/TOOLS.md" "$HOME/.local/share/mybash/TOOLS.md"
+cp "$REPO_DIR/asciiart.txt" "$HOME/.local/share/mybash/asciiart.txt"
 cp -r "$REPO_DIR/scripts" "$HOME/.local/share/mybash/"
 cp -r "$REPO_DIR/bin" "$HOME/.local/share/mybash/"
 

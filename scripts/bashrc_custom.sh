@@ -16,13 +16,13 @@ if command -v starship &> /dev/null; then
     eval "$(starship init bash)"
 fi
 
-# 4. FZF
-if command -v fzf &> /dev/null; then
-    # Check if fzf supports --bash flag (newer versions)
-    if fzf --bash &>/dev/null; then
+# 4. FZF (Auto-enabled for Ctrl+T/Ctrl+R support)
+# Keybindings can't be lazy-loaded since Ctrl+R is handled at readline level
+# To disable: export MYBASH_DISABLE_FZF=1 before sourcing bashrc
+if command -v fzf &> /dev/null && [ -z "$MYBASH_DISABLE_FZF" ]; then
+    if fzf --bash &>/dev/null 2>&1; then
         eval "$(fzf --bash)"
     else
-        # Fallback for older fzf versions
         source /usr/share/doc/fzf/examples/key-bindings.bash 2>/dev/null || true
     fi
 fi
@@ -47,9 +47,19 @@ cd() {
     fi
 }
 
-# 7. Zoxide (Smart Directory Jumper)
+# 7. Zoxide (Smart Directory Jumper - Lazy-loaded)
+# Initializes on first use of 'z' command - saves ~60ms on startup
 if command -v zoxide &> /dev/null; then
-    eval "$(zoxide init bash)"
+    z() {
+        unset -f z zi  # Remove placeholder functions
+        eval "$(zoxide init bash)"  # Initialize zoxide for real
+        z "$@"  # Call the real z command with original arguments
+    }
+    zi() {
+        unset -f z zi
+        eval "$(zoxide init bash)"
+        zi "$@"
+    }
 fi
 
 # 8. Enhanced FZF Previews (bat + eza integration)
@@ -59,10 +69,16 @@ if command -v fzf &> /dev/null; then
     export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :500 {} 2>/dev/null || eza --tree --level=2 --icons {} 2>/dev/null || cat {}'"
 fi
 
-# 9. Welcome Message (Learning Mode)
+# 9. Welcome Banner
 if [[ $- == *i* ]] && [ -z "$MYBASH_WELCOME_SHOWN" ]; then
-    echo -e "\033[1;36m📚 MyBash V2 - Learning Mode Active\033[0m"
-    echo -e "\033[0;90mNew tools available! Type 'mybash-tools' for quick reference.\033[0m"
-    echo -e "\033[0;90mNeed help? Run 'mybash-doctor' to check your setup.\033[0m"
+    # Try to display ASCII art banner
+    # Use 'command cat' to bypass bat alias and show raw ASCII
+    if [ -f "$HOME/.local/share/mybash/asciiart.txt" ]; then
+        command cat "$HOME/.local/share/mybash/asciiart.txt"
+    elif [ -f "$SCRIPT_DIR/../asciiart.txt" ]; then
+        command cat "$SCRIPT_DIR/../asciiart.txt"
+    fi
+    echo ""  # Blank line for spacing
+    echo -e "\033[0;90mType 'mybash-tools' for reference • 'mybash-doctor' for diagnostics\033[0m"
     export MYBASH_WELCOME_SHOWN=1
 fi

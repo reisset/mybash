@@ -37,9 +37,7 @@ alias gl='git pull'
 
 # Modern CLI Tools (Learning-First)
 # Navigation & Search
-if command -v zoxide &> /dev/null; then
-    alias zi='z -i'
-fi
+# Note: z and zi are lazy-loaded in bashrc_custom.sh
 if command -v fdfind &> /dev/null; then
     alias fdf='fdfind'
 elif command -v fd &> /dev/null; then
