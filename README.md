@@ -3,7 +3,8 @@
 An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
 
 ## Preview
-<img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-31" src="https://github.com/user-attachments/assets/916a35c9-85f1-4d9f-ab87-59a2a15a87bb" />
+<img width="2943" height="1841" alt="Screenshot from 2025-12-23 15-16-16" src="https://github.com/user-attachments/assets/210577bd-1589-49cc-ad30-22dbae6a0f02" />
+
 
 ## The Goods
 
@@ -50,6 +51,7 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 - **Bash Logic:** `scripts/bashrc_custom.sh`.
 - **Prompt:** `configs/starship_text.toml`.
 - **Kitty:** `configs/kitty.conf` (symlinked to `~/.config/kitty/kitty.conf`).
+- **ASCII art:** `asciiart.txt` 
 
 ## MyBash Commands (V2.2+)
 
