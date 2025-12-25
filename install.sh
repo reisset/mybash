@@ -41,6 +41,14 @@ confirm_no() {
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
+get_github_arch() {
+    if [[ "$ARCH" == "aarch64" ]]; then
+        echo "arm64"
+    else
+        echo "$ARCH"
+    fi
+}
+
 # Parse arguments
 for arg in "$@"; do
     case $arg in
@@ -384,16 +392,12 @@ fi
 
 # Glow
 if ! command -v glow &> /dev/null; then
-    glow_arch="$ARCH"
-    [[ "$ARCH" == "aarch64" ]] && glow_arch="arm64"
-    install_from_github "charmbracelet/glow" "glow" "Linux_${glow_arch}\.tar\.gz"
+    install_from_github "charmbracelet/glow" "glow" "Linux_$(get_github_arch)\.tar\.gz"
 fi
 
 # Gping
 if ! command -v gping &> /dev/null; then
-    gping_arch="$ARCH"
-    [[ "$ARCH" == "aarch64" ]] && gping_arch="arm64"
-    install_from_github "orf/gping" "gping" "Linux-musl-${gping_arch}\.tar\.gz"
+    install_from_github "orf/gping" "gping" "Linux-musl-$(get_github_arch)\.tar\.gz"
 fi
 
 # Btop
@@ -403,9 +407,7 @@ fi
 
 # Tealdeer (tldr)
 if ! command -v tldr &> /dev/null; then
-    tealdeer_arch="$ARCH"
-    [[ "$ARCH" == "aarch64" ]] && tealdeer_arch="arm64"
-    install_from_github "dbrgn/tealdeer" "tldr" "tealdeer-linux-$tealdeer_arch-musl"
+    install_from_github "dbrgn/tealdeer" "tldr" "tealdeer-linux-$(get_github_arch)-musl"
 fi
 
 # Dust
@@ -424,9 +426,7 @@ fi
 # Lazygit
 if ! $SERVER_MODE; then
     if ! command -v lazygit &> /dev/null; then
-        lazygit_arch="$ARCH"
-        [[ "$ARCH" == "aarch64" ]] && lazygit_arch="arm64"
-        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_${lazygit_arch}\.tar\.gz"
+        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_$(get_github_arch)\.tar\.gz"
     fi
 fi
 

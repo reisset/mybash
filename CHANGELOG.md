@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Installer Optimization**: Reduced code duplication for architecture mapping
+  - Added `get_github_arch` helper function
+  - Replaced repetitive `aarch64` -> `arm64` mapping blocks with single function call
+  - Simplified installation logic for Glow, Gping, Tealdeer, and Lazygit
+
 - **Project Structure Reorganization**: Improved repository clarity by separating standalone tools from internal logic.
   - Created `bin/` directory for standalone executable tools.
   - Moved `mybash-doctor.sh` and `mybash-tools.sh` from `scripts/` to `bin/`.
