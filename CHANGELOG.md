@@ -66,6 +66,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Falls back to traditional key-bindings.bash source for older versions
   - Error message no longer appears on terminal startup
 
+- **CRITICAL: Fresh install directory creation**: Fixed `ln: No such file` error by creating `~/.local/bin` immediately at script start
+  - Ensures destination exists before any tools attempt to link binaries
+  - Prevents script failure on brand new OS installations
+
+- **Font Installation**: Added missing download and install logic for JetBrainsMono Nerd Font
+  - Previously only checked for font presence but did not install it
+  - Now downloads latest release from GitHub, installs to `~/.local/share/fonts`, and runs `fc-cache`
+  - Ensures icons render correctly immediately after install
+
+- **Kitty Path Resolution**: Improved Kitty detection for first-run scenarios
+  - Fixed issue where config linking and default terminal setting failed if Kitty wasn't yet in PATH
+  - Now explicitly checks `~/.local/bin/kitty` in addition to `command -v kitty`
+  - Ensures `Ctrl+Alt+T` works immediately after installation without needing a relogin
+
 ## [2.2.0] - 2025-12-22
 
 ### Added

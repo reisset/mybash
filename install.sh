@@ -10,6 +10,7 @@ CONFIGS_DIR="$REPO_DIR/configs"
 SCRIPTS_DIR="$REPO_DIR/scripts"
 BIN_DIR="$REPO_DIR/bin"
 LOCAL_BIN="$HOME/.local/bin"
+mkdir -p "$LOCAL_BIN"
 
 # Colors
 GREEN='\033[0;32m'
@@ -162,6 +163,38 @@ install_from_github() {
 }
 
 # --------------------------------------------------------------------------
+# 1.5 Fonts
+# --------------------------------------------------------------------------
+
+if ! fc-list : family | grep -qi "JetBrainsMono Nerd Font"; then
+    if confirm "Install JetBrainsMono Nerd Font (Recommended for icons)?"; then
+        log_info "Downloading JetBrainsMono Nerd Font..."
+        mkdir -p "$HOME/.local/share/fonts"
+        
+        FONT_ZIP="/tmp/JetBrainsMono.zip"
+        # Using v3.2.1 (Latest stable at time of writing)
+        if curl -fL \
+            --retry 5 \
+            --retry-delay 3 \
+            --connect-timeout 10 \
+            -o "$FONT_ZIP" \
+            "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip"; then
+            
+            unzip -o -q "$FONT_ZIP" -d "$HOME/.local/share/fonts"
+            rm -f "$FONT_ZIP"
+            
+            log_info "Rebuilding font cache (this may take a moment)..."
+            fc-cache -f "$HOME/.local/share/fonts"
+            log_info "JetBrainsMono Nerd Font installed."
+        else
+            log_error "Failed to download font."
+        fi
+    fi
+else
+    log_info "JetBrainsMono Nerd Font is already installed."
+fi
+
+# --------------------------------------------------------------------------
 # 2. Tools
 # --------------------------------------------------------------------------
 
@@ -207,9 +240,15 @@ if ! $SERVER_MODE; then
     fi
 
     # Set Kitty as Default Terminal
+    # Check both PATH and local bin location
+    kitty_path=""
     if command -v kitty &> /dev/null; then
         kitty_path="$(command -v kitty)"
+    elif [ -x "$LOCAL_BIN/kitty" ]; then
+        kitty_path="$LOCAL_BIN/kitty"
+    fi
 
+    if [ -n "$kitty_path" ]; then
         # For system-wide installations, use update-alternatives
         if [[ "$kitty_path" == /usr/* ]] && $USE_SUDO; then
             if confirm_no "Set Kitty as default terminal (update-alternatives)?"; then
@@ -224,7 +263,9 @@ if ! $SERVER_MODE; then
         # Always set via GNOME settings (works for both system and user installs)
         if command -v gsettings &> /dev/null; then
             if confirm_no "Set Kitty as default terminal (GNOME settings)?"; then
-                gsettings set org.gnome.desktop.default-applications.terminal exec 'kitty'
+                gsettings set org.gnome.desktop.default-applications.terminal exec "$kitty_path"
+                # Clear exec-arg to avoid issues with some shortcuts expecting specific args
+                gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''
                 log_info "Kitty set as default via GNOME settings."
             fi
         fi
@@ -457,7 +498,8 @@ log_info "Linking Configurations..."
 
 if [ -d "$HOME/.config" ]; then
     # Kitty Config
-    if ! $SERVER_MODE && command -v kitty &> /dev/null; then
+    # Check if kitty is installed (path or local bin)
+    if ! $SERVER_MODE && { command -v kitty &> /dev/null || [ -x "$LOCAL_BIN/kitty" ]; }; then
         mkdir -p "$HOME/.config/kitty"
         ln -sf "$CONFIGS_DIR/kitty.conf" "$HOME/.config/kitty/kitty.conf"
         log_info "Linked Kitty config."
