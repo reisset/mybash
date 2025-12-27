@@ -11,6 +11,12 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
+# 2.5 Default Editor (Micro if available)
+if command -v micro &> /dev/null; then
+    export EDITOR='micro'
+    export VISUAL='micro'
+fi
+
 # 3. Starship Prompt
 if command -v starship &> /dev/null; then
     eval "$(starship init bash)"

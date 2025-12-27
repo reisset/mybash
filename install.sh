@@ -370,7 +370,7 @@ log_info "Installing Modern CLI Tools (Learning-First)..."
 if $USE_SUDO; then
     # APT Installations (where available)
     # Note: git-delta not included - uses GitHub fallback for broader compatibility
-    sudo apt install -y tealdeer btop fd-find
+    sudo apt install -y tealdeer btop fd-find micro
     
     # Symlink fd if installed via apt
     if command -v fdfind &> /dev/null; then
@@ -421,6 +421,11 @@ fi
 # Delta (Fallback)
 if ! command -v delta &> /dev/null; then
     install_from_github "dandavison/delta" "delta" "$ARCH.*linux-gnu.tar.gz"
+fi
+
+# Micro Editor
+if ! command -v micro &> /dev/null; then
+    install_from_github "zyedidia/micro" "micro" "linux$(get_github_arch).tar.gz"
 fi
 
 # Lazygit
@@ -555,7 +560,7 @@ echo "" >> "$MANIFEST_FILE"
 echo "# Installed Binaries" >> "$MANIFEST_FILE"
 for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
               btop dust fd delta lazygit procs bandwhich hyperfine tokei \
-              glow gping tldr; do
+              glow gping tldr micro; do
     if [ -x "$LOCAL_BIN/$binary" ]; then
         echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"
     fi

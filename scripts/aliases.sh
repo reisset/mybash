@@ -63,6 +63,12 @@ if command -v tokei &> /dev/null; then
     alias cloc='tokei'
 fi
 
+# Micro Editor
+if command -v micro &> /dev/null; then
+    alias m='micro'
+    alias edit='micro'
+fi
+
 # Quick Reference
 alias tools='cat ~/.local/share/mybash/TOOLS.md 2>/dev/null || cat ~/mybash/docs/TOOLS.md'
 
@@ -79,4 +85,5 @@ alias mybash-doctor='bash ~/.local/share/mybash/bin/mybash-doctor.sh 2>/dev/null
 # alias find='fd'
 # alias ps='procs'
 # alias grep='rg'
+# alias nano='micro'
 # ==============================================================================

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Micro Editor**: Modern, intuitive terminal text editor
+  - Installs via apt (with sudo) or GitHub fallback (without sudo)
+  - Set as default `EDITOR` and `VISUAL` for git commits, crontab, etc.
+  - New aliases: `m` and `edit` point to micro
+  - Power Mode includes optional `alias nano='micro'` for full replacement
+  - Learning-First: `nano` remains nano by default
+
 ### Changed
 
 - **Installer Optimization**: Reduced code duplication for architecture mapping

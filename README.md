@@ -9,7 +9,7 @@ An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to h
 ## The Goods
 
 - **Starship Prompt:** Fast, informative, and git-aware.
-- **Modern Toolset:** Includes `zoxide` (better cd), `eza` (better ls), `bat`, `fzf`, and `lazygit`, `yazi` (modern TUI file browser).
+- **Modern Toolset:** Includes `zoxide` (better cd), `eza` (better ls), `bat`, `fzf`, `lazygit`, `yazi` (modern TUI file browser), and `micro` (intuitive editor).
 - **Muscle Memory Safe:** Standard commands (cd, grep) still work, so you won't get lost.
 - **Look & Feel:** Tokyo Night theme, syntax-highlighted diffs, and smart aliases.
 - **Kitty Terminal:** [Optional] config with GPU acceleration and Nerd Fonts pre-set.
