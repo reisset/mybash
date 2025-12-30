@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Power Mode includes optional `alias nano='micro'` for full replacement
   - Learning-First: `nano` remains nano by default
 
+### Fixed
+
+- **Font installation prompt in server mode**: Skipped font install on `--server` mode
+  - Servers don't render fonts - the SSH client (your local terminal) does
+  - Previously prompted to install JetBrainsMono even on headless systems
+  - Now the entire font section is skipped when using `./install.sh --server`
+
 ### Changed
 
 - **Installer Optimization**: Reduced code duplication for architecture mapping

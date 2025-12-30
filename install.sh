@@ -171,35 +171,37 @@ install_from_github() {
 }
 
 # --------------------------------------------------------------------------
-# 1.5 Fonts
+# 1.5 Fonts (Desktop only - servers don't render fonts, the SSH client does)
 # --------------------------------------------------------------------------
 
-if ! fc-list : family | grep -qi "JetBrainsMono Nerd Font"; then
-    if confirm "Install JetBrainsMono Nerd Font (Recommended for icons)?"; then
-        log_info "Downloading JetBrainsMono Nerd Font..."
-        mkdir -p "$HOME/.local/share/fonts"
-        
-        FONT_ZIP="/tmp/JetBrainsMono.zip"
-        # Using v3.2.1 (Latest stable at time of writing)
-        if curl -fL \
-            --retry 5 \
-            --retry-delay 3 \
-            --connect-timeout 10 \
-            -o "$FONT_ZIP" \
-            "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip"; then
-            
-            unzip -o -q "$FONT_ZIP" -d "$HOME/.local/share/fonts"
-            rm -f "$FONT_ZIP"
-            
-            log_info "Rebuilding font cache (this may take a moment)..."
-            fc-cache -f "$HOME/.local/share/fonts"
-            log_info "JetBrainsMono Nerd Font installed."
-        else
-            log_error "Failed to download font."
+if ! $SERVER_MODE; then
+    if ! fc-list : family | grep -qi "JetBrainsMono Nerd Font"; then
+        if confirm "Install JetBrainsMono Nerd Font (Recommended for icons)?"; then
+            log_info "Downloading JetBrainsMono Nerd Font..."
+            mkdir -p "$HOME/.local/share/fonts"
+
+            FONT_ZIP="/tmp/JetBrainsMono.zip"
+            # Using v3.2.1 (Latest stable at time of writing)
+            if curl -fL \
+                --retry 5 \
+                --retry-delay 3 \
+                --connect-timeout 10 \
+                -o "$FONT_ZIP" \
+                "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip"; then
+
+                unzip -o -q "$FONT_ZIP" -d "$HOME/.local/share/fonts"
+                rm -f "$FONT_ZIP"
+
+                log_info "Rebuilding font cache (this may take a moment)..."
+                fc-cache -f "$HOME/.local/share/fonts"
+                log_info "JetBrainsMono Nerd Font installed."
+            else
+                log_error "Failed to download font."
+            fi
         fi
+    else
+        log_info "JetBrainsMono Nerd Font is already installed."
     fi
-else
-    log_info "JetBrainsMono Nerd Font is already installed."
 fi
 
 # --------------------------------------------------------------------------
