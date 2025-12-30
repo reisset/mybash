@@ -22,7 +22,7 @@ Don't just run random scripts from the internet. Read the code first.
 1. **Clone & Inspect:**
     *(You may need to `sudo apt install git` first)*
     ```bash
-    git clone [https://github.com/reisset/mybash.git](https://github.com/reisset/mybash.git)
+    git clone https://github.com/reisset/mybash.git
     cd mybash
     cat install.sh  # Review before running
     ```
@@ -30,7 +30,7 @@ Don't just run random scripts from the internet. Read the code first.
 2. **Install:**
     ```bash
     ./install.sh           # Full desktop install
-    ./install.sh --server  # Headless/server install (skips Kitty, lazygit, nvtop)
+    ./install.sh --server  # Headless/server install (skips fonts, Kitty, lazygit, nvtop)
     ```
 
 3. **Finish Up:**
