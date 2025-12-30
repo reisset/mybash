@@ -457,9 +457,12 @@ fi
 if ! command -v tokei &> /dev/null; then
     log_info "Installing tokei from GitHub (XAMPPRocky/tokei v12.1.2)..."
 
-    # Determine tokei architecture pattern
-    tokei_arch="$ARCH"
-    tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-${tokei_arch}-unknown-linux-musl.tar.gz"
+    # Determine tokei architecture pattern (ARM64 only has gnu, x86_64 has musl)
+    if [ "$ARCH" = "aarch64" ]; then
+        tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-aarch64-unknown-linux-gnu.tar.gz"
+    else
+        tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-x86_64-unknown-linux-musl.tar.gz"
+    fi
 
     log_info "Downloading $tokei_url..."
     if curl -fL -o "/tmp/tokei.archive" "$tokei_url"; then
