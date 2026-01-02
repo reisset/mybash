@@ -72,7 +72,7 @@ This installer relies on the security of:
   - Implemented download retry logic across all curl/wget operations
   - Added install manifest tracking system for safe uninstallation
   - Created uninstall.sh with timestamped .bashrc backups
-  - Added mybash-doctor for read-only health checks
+  - Added `mybash doctor` command for read-only health checks
   - Removed nerdfetch to improve startup performance
   - All new scripts follow principle of least privilege
 

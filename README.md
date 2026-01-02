@@ -55,17 +55,15 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 
 ## MyBash Commands (V2.2+)
 
-MyBash includes helpful utility commands:
+MyBash includes a unified CLI for help and diagnostics:
 
-- **mybash-tools** - Browse available modern tools with descriptions (uses glow for pretty rendering)
-- **mybash-doctor** - Run health checks and diagnostics to troubleshoot your setup
-- **uninstall.sh** - Completely remove MyBash from your system
-
-Example:
 ```bash
-mybash-tools    # See what tools are available
-mybash-doctor   # Check if everything is working correctly
-./uninstall.sh  # Safely remove MyBash
+mybash           # Quick status
+mybash -h        # Show help with subcommands and alias reference
+mybash tools     # Browse available modern tools (uses glow)
+mybash doctor    # Run health checks and diagnostics
+mybash version   # Show version
+./uninstall.sh   # Safely remove MyBash
 ```
 
 ## License

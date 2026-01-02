@@ -4,8 +4,9 @@ Welcome to the **Learning-First** toolset. This guide helps you navigate the mod
 
 ## 💡 Quick Access
 
-- **mybash-tools** - View this guide with pretty formatting (uses glow for beautiful rendering)
-- **mybash-doctor** - Check if your MyBash setup is healthy and troubleshoot issues
+- **mybash -h** - Show help and quick alias reference
+- **mybash tools** - View this guide with pretty formatting (uses glow)
+- **mybash doctor** - Check if your MyBash setup is healthy and troubleshoot issues
 
 ## 🧠 Philosophy: Learning-First
 MyBash V2.2 adds powerful modern tools but **does not replace** the originals.

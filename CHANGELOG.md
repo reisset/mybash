@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Unified `mybash` CLI**: Consolidated help and utility commands into a single interface
+  - `mybash` - Quick status showing version and help hint
+  - `mybash -h` / `--help` - CLI-style help with subcommands and quick alias reference
+  - `mybash tools` - Browse tool reference guide (renders TOOLS.md with glow)
+  - `mybash doctor` - Run health checks and diagnostics
+  - `mybash version` - Show version info
+  - Follows modern CLI patterns similar to git, docker, etc.
+
 - **Micro Editor**: Modern, intuitive terminal text editor
   - Installs via apt (with sudo) or GitHub fallback (without sudo)
   - Set as default `EDITOR` and `VISUAL` for git commits, crontab, etc.
@@ -100,6 +108,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed issue where config linking and default terminal setting failed if Kitty wasn't yet in PATH
   - Now explicitly checks `~/.local/bin/kitty` in addition to `command -v kitty`
   - Ensures `Ctrl+Alt+T` works immediately after installation without needing a relogin
+
+### Removed
+
+- **`mybash-tools` command**: Replaced by `mybash tools` subcommand
+- **`mybash-doctor` command**: Replaced by `mybash doctor` subcommand
+- **`bin/mybash-tools.sh`**: Consolidated into unified `bin/mybash` script
+- **`bin/mybash-doctor.sh`**: Consolidated into unified `bin/mybash` script
 
 ## [2.2.0] - 2025-12-22
 

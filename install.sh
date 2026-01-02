@@ -492,6 +492,11 @@ cp "$REPO_DIR/asciiart.txt" "$HOME/.local/share/mybash/asciiart.txt"
 cp -r "$REPO_DIR/scripts" "$HOME/.local/share/mybash/"
 cp -r "$REPO_DIR/bin" "$HOME/.local/share/mybash/"
 
+# Install mybash CLI to PATH
+cp "$BIN_DIR/mybash" "$LOCAL_BIN/mybash"
+chmod +x "$LOCAL_BIN/mybash"
+log_info "Installed mybash CLI (run 'mybash -h' for help)"
+
 # Git Delta Configuration
 if command -v delta &> /dev/null; then
     if confirm "Configure git to use delta for diffs?"; then
@@ -565,7 +570,7 @@ echo "" >> "$MANIFEST_FILE"
 echo "# Installed Binaries" >> "$MANIFEST_FILE"
 for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
               btop dust fd delta lazygit procs bandwhich hyperfine tokei \
-              glow gping tldr micro; do
+              glow gping tldr micro mybash; do
     if [ -x "$LOCAL_BIN/$binary" ]; then
         echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"
     fi

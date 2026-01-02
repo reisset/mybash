@@ -126,7 +126,7 @@ BINARIES_TO_REMOVE=()
 if [ "$MANUAL_MODE" = true ]; then
     # Manual detection
     for binary in eza bat rg fzf zoxide yazi starship btop dust fd delta \
-                  lazygit procs bandwhich hyperfine tokei glow gping tldr; do
+                  lazygit procs bandwhich hyperfine tokei glow gping tldr micro mybash; do
         if [ -x "$HOME/.local/bin/$binary" ]; then
             echo "  - $binary"
             BINARIES_TO_REMOVE+=("$HOME/.local/bin/$binary")
