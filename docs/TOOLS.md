@@ -1,4 +1,4 @@
-# 📚 MyBash V2.2 - Modern CLI Tools Guide
+# 📚 MyBash V2.3 - Modern CLI Tools Guide
 
 Welcome to the **Learning-First** toolset. This guide helps you navigate the modern CLI landscape while keeping your traditional Linux skills sharp.
 
@@ -9,7 +9,7 @@ Welcome to the **Learning-First** toolset. This guide helps you navigate the mod
 - **mybash doctor** - Check if your MyBash setup is healthy and troubleshoot issues
 
 ## 🧠 Philosophy: Learning-First
-MyBash V2.2 adds powerful modern tools but **does not replace** the originals.
+MyBash V2.3 adds powerful modern tools but **does not replace** the originals.
 - `cd`, `du`, `find`, and `ps` work exactly as they do on any standard Linux system.
 - Modern tools are provided as **separate commands** (e.g., `z`, `dust`, `fd`).
 - This ensures your muscle memory remains compatible with "vanilla" systems like a Raspberry Pi or a fresh server.
@@ -44,6 +44,7 @@ MyBash V2.2 adds powerful modern tools but **does not replace** the originals.
 | **tokei** | `cloc` | Statistics about your code lines, comments, and languages. |
 | **glow** | `glow` | Render markdown in the terminal. |
 | **gping** | `gping` | Ping with a live graph. |
+| **micro** | `m`, `edit` | Modern, intuitive terminal text editor. |
 
 ---
 
