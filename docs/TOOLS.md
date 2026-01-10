@@ -38,6 +38,7 @@ MyBash V2.3 adds powerful modern tools but **does not replace** the originals.
 | :--- | :--- | :--- |
 | **tealdeer** | `tldr` | Practical examples for any command (instead of long man pages). |
 | **lazygit** | `lg` | Incredible TUI for managing git repos, commits, and branches. |
+| **zellij** | `zellij` | Modern terminal multiplexer (tmux alternative) with built-in layouts. |
 | **delta** | `git diff` | Syntax highlighting and side-by-side diffs for Git. |
 | **bandwhich** | `bandwhich` | See which process is using your bandwidth in real-time. |
 | **hyperfine** | `benchmark` | Benchmark command execution speed. |

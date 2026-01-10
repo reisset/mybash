@@ -41,6 +41,24 @@ confirm_no() {
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
+# Print a boxed header message
+print_header() {
+    local msg="$1"
+    local color="${2:-$CYAN}"
+    local width=65
+    local pad=$(( (width - ${#msg}) / 2 ))
+    echo ""
+    echo -e "${color}╔$(printf '═%.0s' $(seq 1 $width))╗${NC}"
+    echo -e "${color}║$(printf ' %.0s' $(seq 1 $pad))${msg}$(printf ' %.0s' $(seq 1 $((width - pad - ${#msg}))))║${NC}"
+    echo -e "${color}╚$(printf '═%.0s' $(seq 1 $width))╝${NC}"
+    echo ""
+}
+
+print_success_box() {
+    local msg="$1"
+    print_header "$msg" "$GREEN"
+}
+
 get_github_arch() {
     if [[ "$ARCH" == "aarch64" ]]; then
         echo "arm64"
@@ -59,7 +77,9 @@ for arg in "$@"; do
     esac
 done
 
-log_info "Initializing MyBash V2 Installer..."
+print_header "MyBash V2 Installer" "$CYAN"
+
+log_info "Initializing installation..."
 if $SERVER_MODE; then
     log_info "Mode: Server/Headless (Skipping desktop tools)"
 else
@@ -437,6 +457,15 @@ if ! $SERVER_MODE; then
     fi
 fi
 
+# Zellij (Terminal Multiplexer - Desktop only)
+if ! $SERVER_MODE; then
+    if ! command -v zellij &> /dev/null; then
+        if confirm "Install Zellij (terminal multiplexer)?"; then
+            install_from_github "zellij-org/zellij" "zellij" "$ARCH-unknown-linux-musl.tar.gz"
+        fi
+    fi
+fi
+
 # Procs
 [ ! -x "$LOCAL_BIN/procs" ] && install_from_github "dalance/procs" "procs" "$ARCH-linux.zip"
 
@@ -519,7 +548,14 @@ if [ -d "$HOME/.config" ]; then
         ln -sf "$CONFIGS_DIR/kitty.conf" "$HOME/.config/kitty/kitty.conf"
         log_info "Linked Kitty config."
     fi
-    
+
+    # Zellij Config
+    if ! $SERVER_MODE && { command -v zellij &> /dev/null || [ -x "$LOCAL_BIN/zellij" ]; }; then
+        mkdir -p "$HOME/.config/zellij"
+        ln -sf "$CONFIGS_DIR/zellij.kdl" "$HOME/.config/zellij/config.kdl"
+        log_info "Linked Zellij config."
+    fi
+
     # Always link Starship
     ln -sf "$CONFIGS_DIR/starship_text.toml" "$HOME/.config/starship.toml"
     log_info "Linked Starship config."
@@ -559,6 +595,9 @@ fi
 if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
     echo "symlink:$HOME/.config/kitty/kitty.conf" >> "$MANIFEST_FILE"
 fi
+if [ -L "$HOME/.config/zellij/config.kdl" ]; then
+    echo "symlink:$HOME/.config/zellij/config.kdl" >> "$MANIFEST_FILE"
+fi
 
 # Track bashrc modification
 if grep -qF "source $SCRIPTS_DIR/bashrc_custom.sh" "$HOME/.bashrc"; then
@@ -570,7 +609,7 @@ echo "" >> "$MANIFEST_FILE"
 echo "# Installed Binaries" >> "$MANIFEST_FILE"
 for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
               btop dust fd delta lazygit procs bandwhich hyperfine tokei \
-              glow gping tldr micro mybash; do
+              glow gping tldr micro mybash zellij; do
     if [ -x "$LOCAL_BIN/$binary" ]; then
         echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"
     fi
@@ -583,5 +622,6 @@ fi
 
 log_info "Manifest saved to $MANIFEST_FILE"
 
-log_info "Installation Complete! Restart your shell."
+print_success_box "Installation Complete!"
 log_warn "IMPORTANT: To see icons, set your terminal font to 'JetBrainsMono Nerd Font' (or MesloLGS) manually if not using Kitty."
+log_info "Restart your shell to apply changes."
