@@ -80,12 +80,12 @@ if [[ $- == *i* ]] && [ -z "$MYBASH_WELCOME_SHOWN" ]; then
     # Try to display ASCII art banner
     # Use 'command cat' to bypass bat alias and show raw ASCII
     if [ -f "$HOME/.local/share/mybash/asciiart.txt" ]; then
-        command cat "$HOME/.local/share/mybash/asciiart.txt"
+        printf '%b\n' "$(command cat "$HOME/.local/share/mybash/asciiart.txt")"
     elif [ -f "$SCRIPT_DIR/../asciiart.txt" ]; then
-        command cat "$SCRIPT_DIR/../asciiart.txt"
+        printf '%b\n' "$(command cat "$SCRIPT_DIR/../asciiart.txt")"
     fi
     echo ""  # Blank line for spacing
-    echo -e "\e[38;5;243m  $(date '+%A, %B %d') • mybash v2.3.0\e[0m"
+    echo -e "\e[38;5;243m  $(date '+%A, %B %d')\e[0m"
     echo -e "\033[0;90mType 'mybash -h' for help • 'mybash tools' for reference • 'mybash doctor' for diagnostics\033[0m"
     export MYBASH_WELCOME_SHOWN=1
 fi
