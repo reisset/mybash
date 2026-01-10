@@ -43,6 +43,16 @@ MyBash V2.3 adds powerful modern tools but **does not replace** the originals.
 | **gping** | `gping` | Ping with a live graph. |
 | **micro** | `m`, `edit` | Modern, intuitive terminal text editor. |
 
+### 4. Kitty Kittens (Terminal Eye Candy)
+| Kitten | Command / Shortcut | Description |
+| :--- | :--- | :--- |
+| **icat** | `icat <image>` | Display images directly in the terminal. |
+| **kdiff** | `kdiff <file1> <file2>` | Syntax-highlighted side-by-side diff viewer. |
+| **hints** | `Ctrl+Shift+E` | Make URLs, paths, git hashes clickable with keyboard. |
+| **hints (paths)** | `Ctrl+Shift+P` then `F` | Quick file path selection mode. |
+| **unicode_input** | `Ctrl+Shift+U` | Browse and insert emojis/unicode symbols. |
+| **themes** | `Ctrl+Shift+F5` | Live preview and switch Kitty color themes. |
+
 ---
 
 ## ⌨️ Quick Shortcuts

@@ -12,7 +12,7 @@ An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to h
 - **Modern Toolset:** Includes `zoxide` (better cd), `eza` (better ls), `bat`, `fzf`, `lazygit`, `yazi` (modern TUI file browser), and `micro` (intuitive editor).
 - **Muscle Memory Safe:** Standard commands (cd, grep) still work, so you won't get lost.
 - **Look & Feel:** Tokyo Night theme, syntax-highlighted diffs, and smart aliases.
-- **Kitty Terminal:** [Optional] config with GPU acceleration and Nerd Fonts pre-set.
+- **Kitty Terminal:** [Optional] config with GPU acceleration, Nerd Fonts, and kitten shortcuts (image viewer, URL hints, theme switcher).
 
 <img width="2944" height="1836" alt="Screenshot from 2025-12-19 15-28-56" src="https://github.com/user-attachments/assets/7d2685b9-5fc8-483c-9545-25b34e79e350" />
 

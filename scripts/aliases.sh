@@ -69,6 +69,12 @@ if command -v micro &> /dev/null; then
     alias edit='micro'
 fi
 
+# Kitty Kittens (Terminal Eye Candy - only if running in Kitty)
+if [ "$TERM" = "xterm-kitty" ]; then
+    alias icat='kitten icat'           # Display images in terminal
+    alias kdiff='kitten diff'          # Syntax-highlighted diff viewer
+fi
+
 # Quick Reference (mybash command is installed to ~/.local/bin/)
 alias tools='cat ~/.local/share/mybash/TOOLS.md 2>/dev/null || cat ~/mybash/docs/TOOLS.md'
 
