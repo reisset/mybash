@@ -1,4 +1,0 @@
-// Zellij Configuration for MyBash
-// Uses built-in Tokyo Night theme for consistency with Kitty/Starship
-
-theme "tokyo-night-dark"

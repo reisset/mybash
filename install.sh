@@ -457,62 +457,8 @@ if ! $SERVER_MODE; then
     fi
 fi
 
-# Zellij (Terminal Multiplexer - Desktop only)
-if ! $SERVER_MODE; then
-    if ! command -v zellij &> /dev/null; then
-        if confirm "Install Zellij (terminal multiplexer)?"; then
-            install_from_github "zellij-org/zellij" "zellij" "$ARCH-unknown-linux-musl.tar.gz"
-        fi
-    fi
-fi
-
 # Procs
 [ ! -x "$LOCAL_BIN/procs" ] && install_from_github "dalance/procs" "procs" "$ARCH-linux.zip"
-
-# Bandwhich
-if [ ! -x "$LOCAL_BIN/bandwhich" ]; then
-    install_from_github "imsnif/bandwhich" "bandwhich" "$ARCH.*linux-musl.tar.gz"
-    if [ -x "$LOCAL_BIN/bandwhich" ] && $USE_SUDO; then
-        if confirm "Allow bandwhich to sniff network without sudo? (Uses setcap)"; then
-            sudo setcap cap_sys_ptrace,cap_dac_read_search,cap_net_raw,cap_net_admin+ep "$LOCAL_BIN/bandwhich"
-        fi
-    fi
-fi
-
-# Hyperfine
-[ ! -x "$LOCAL_BIN/hyperfine" ] && install_from_github "sharkdp/hyperfine" "hyperfine" "$ARCH.*linux-gnu.tar.gz"
-
-# Tokei (Note: v13.0.0 has no binaries, using v12.1.2)
-if ! command -v tokei &> /dev/null; then
-    log_info "Installing tokei from GitHub (XAMPPRocky/tokei v12.1.2)..."
-
-    # Determine tokei architecture pattern (ARM64 only has gnu, x86_64 has musl)
-    if [ "$ARCH" = "aarch64" ]; then
-        tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-aarch64-unknown-linux-gnu.tar.gz"
-    else
-        tokei_url="https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-x86_64-unknown-linux-musl.tar.gz"
-    fi
-
-    log_info "Downloading $tokei_url..."
-    if curl -fL -o "/tmp/tokei.archive" "$tokei_url"; then
-        tar -xzf "/tmp/tokei.archive" -C "/tmp/"
-        if [ -f "/tmp/tokei" ]; then
-            chmod +x "/tmp/tokei"
-            mv "/tmp/tokei" "$LOCAL_BIN/tokei"
-            log_info "Installed tokei to $LOCAL_BIN"
-        else
-            log_error "Binary tokei not found after extraction."
-        fi
-        rm -f "/tmp/tokei.archive"
-    else
-        log_error "Failed to download tokei"
-        # Cargo fallback if github fails
-        if command -v cargo &> /dev/null; then
-            log_info "Tokei GitHub install failed, trying cargo..."
-            cargo install tokei --root "$HOME/.local"
-        fi
-    fi
-fi
 
 # Copy documentation and scripts to local share for aliases
 mkdir -p "$HOME/.local/share/mybash"
@@ -547,13 +493,6 @@ if [ -d "$HOME/.config" ]; then
         mkdir -p "$HOME/.config/kitty"
         ln -sf "$CONFIGS_DIR/kitty.conf" "$HOME/.config/kitty/kitty.conf"
         log_info "Linked Kitty config."
-    fi
-
-    # Zellij Config
-    if ! $SERVER_MODE && { command -v zellij &> /dev/null || [ -x "$LOCAL_BIN/zellij" ]; }; then
-        mkdir -p "$HOME/.config/zellij"
-        ln -sf "$CONFIGS_DIR/zellij.kdl" "$HOME/.config/zellij/config.kdl"
-        log_info "Linked Zellij config."
     fi
 
     # Always link Starship
@@ -595,9 +534,6 @@ fi
 if [ -L "$HOME/.config/kitty/kitty.conf" ]; then
     echo "symlink:$HOME/.config/kitty/kitty.conf" >> "$MANIFEST_FILE"
 fi
-if [ -L "$HOME/.config/zellij/config.kdl" ]; then
-    echo "symlink:$HOME/.config/zellij/config.kdl" >> "$MANIFEST_FILE"
-fi
 
 # Track bashrc modification
 if grep -qF "source $SCRIPTS_DIR/bashrc_custom.sh" "$HOME/.bashrc"; then
@@ -608,8 +544,8 @@ fi
 echo "" >> "$MANIFEST_FILE"
 echo "# Installed Binaries" >> "$MANIFEST_FILE"
 for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
-              btop dust fd delta lazygit procs bandwhich hyperfine tokei \
-              glow gping tldr micro mybash zellij; do
+              btop dust fd delta lazygit procs \
+              glow gping tldr micro mybash; do
     if [ -x "$LOCAL_BIN/$binary" ]; then
         echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"
     fi

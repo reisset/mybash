@@ -5,16 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.0] - 2026-01-10
+## [2.5.0] - 2026-01-10
 
 ### Added
 
-- **Zellij Terminal Multiplexer**: Modern tmux alternative with built-in Tokyo Night theme
-  - Desktop-only installation (skipped in `--server` mode)
-  - Minimal config at `configs/zellij.kdl` using built-in `tokyo-night-dark` theme
-  - Symlinked to `~/.config/zellij/config.kdl`
-  - Added to installation manifest and uninstall script
-  - Provides Omakub-style terminal multiplexing aesthetic
+- **Kitty Framed Aesthetic**: Enhanced terminal visual experience without a multiplexer
+  - Powerline-style tab bar at bottom edge (like status bar)
+  - Visible window borders with Tokyo Night colors
+  - Round powerline separators for modern look
+  - Tab bar shows even with single tab for consistent UI
+
+- **Colorized Welcome Banner**: Tokyo Night gradient ASCII art
+  - Pink → Blue → Purple gradient using RGB ANSI codes
+  - Matches overall theme consistency
+  - More visually striking on terminal startup
+
+- **Dynamic Welcome Line**: Shows current date and version below banner
+  - Format: "Friday, January 10 • mybash v2.5.0"
+  - Subtle gray color for non-intrusive display
+
+### Removed
+
+- **Zellij**: Removed terminal multiplexer (redundant with Kitty's native features)
+  - Removed installation section from `install.sh`
+  - Deleted `configs/zellij.kdl`
+  - Removed from documentation and manifest
+
+- **Unused CLI Tools**: Cleaned up rarely-used utilities
+  - **bandwhich**: Network bandwidth monitor (niche use case)
+  - **hyperfine**: Command benchmarking tool (occasional use)
+  - **tokei**: Code statistics (showcase tool)
+  - Faster installation and more focused toolset
 
 ### Changed
 
@@ -22,7 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - PowerShell-style Unicode box borders (╔═══╗) at installer start and completion
   - Cyan box for "MyBash V2 Installer" header
   - Green success box for "Installation Complete!" message
-  - Cleaner visual separation without overwhelming output
 
 ## [2.3.0] - 2026-01-02
 
@@ -315,8 +335,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All new installation steps follow the `SECURITY.md` guidelines regarding URL validation and script execution safety.
 
 
-[Unreleased]: https://github.com/reisset/mybash/compare/v2.4.0...HEAD
-[2.4.0]: https://github.com/reisset/mybash/compare/v2.3.0...v2.4.0
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/reisset/mybash/compare/v2.3.0...v2.5.0
 [2.3.0]: https://github.com/reisset/mybash/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/reisset/mybash/compare/v2.0.1...v2.2.0
 [2.0.1]: https://github.com/reisset/mybash/compare/v2.0.0...v2.0.1
