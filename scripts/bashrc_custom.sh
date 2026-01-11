@@ -85,7 +85,6 @@ if [[ $- == *i* ]] && [ -z "$MYBASH_WELCOME_SHOWN" ]; then
         printf '%b\n' "$(command cat "$SCRIPT_DIR/../asciiart.txt")"
     fi
     echo ""  # Blank line for spacing
-    echo -e "\e[38;5;243m  $(date '+%A, %B %d')\e[0m"
     echo -e "\033[0;90mType 'mybash -h' for help • 'mybash tools' for reference • 'mybash doctor' for diagnostics\033[0m"
     export MYBASH_WELCOME_SHOWN=1
 fi

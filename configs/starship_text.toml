@@ -13,12 +13,16 @@ $cmd_duration\
     $python\
     $conda\
     $nodejs\
+    $docker_context\
     $c\
     $rust\
     $java\
 )
 [╰─](fg:arrow)$character\
 """
+
+right_format = """$time"""
+
 # Add the modules you need
 
 # Disable the blank line at the start of the prompt
@@ -51,7 +55,7 @@ text_light = "#26272A"
 [username]
 style_user = 'bold os'
 style_root = 'bold os_admin'
-format = '[  $user](fg:$style) '
+format = '[  $user](fg:$style) '
 disabled = false
 show_always = true
 
@@ -83,7 +87,7 @@ error_symbol = "[󰍟](fg:red)"
 
 [directory]
 format = "[$path](bold $style)[$read_only]($read_only_style) "
-truncation_length = 2
+truncation_length = 3
 style = "fg:directory"
 read_only_style = "fg:directory"
 before_repo_root_style = "fg:directory"
@@ -92,7 +96,7 @@ truncate_to_repo = true
 read_only ="  "
 
 [time]
-disabled = true
+disabled = false
 format = "at [󱑈 $time]($style)"
 time_format = "%H:%M"
 style = "bold fg:time"
@@ -113,7 +117,7 @@ style = "fg:text_color bg:git"
 disabled = true
 
 [docker_context]
-disabled=true
+disabled=false
 symbol = " "
 
 [package]

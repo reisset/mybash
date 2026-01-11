@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2026-01-11
+
+### Added
+
+- **Starship Right-Aligned Time**: Time clock now appears on the right side of prompt
+  - Displays as `󱑈 HH:MM` format
+  - Uses Tokyo Night cyan color scheme
+
+- **Docker Context Display**: Docker environment now shown with other dev tools
+  - Appears in "via" section alongside Python, Node, etc.
+  - Only displays when in Docker contexts
+
+### Changed
+
+- **Cleaner Welcome Banner**: Removed redundant date string below ASCII art
+  - Date no longer duplicates Starship's time display
+  - Streamlined terminal startup appearance
+
+### Fixed
+
+- **Starship Config**: Docker module now properly displays (was enabled but not in format string)
+- **Directory Truncation**: Confirmed 3-level truncation working as intended
+
+---
+
 ## [2.6.0] - 2026-01-10
 
 ### Added
@@ -135,7 +160,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/reisset/mybash/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.7.0...HEAD
+[2.7.0]: https://github.com/reisset/mybash/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/reisset/mybash/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/reisset/mybash/compare/v2.3.0...v2.5.0
 [2.3.0]: https://github.com/reisset/mybash/compare/v2.2.0...v2.3.0
