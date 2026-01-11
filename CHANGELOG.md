@@ -5,11 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.1] - 2026-01-11
+
+### Changed
+
+- **Starship Time Display**: Moved time to left prompt (Bash doesn't support right_format)
+  - Changed prefix from "at" to "//" for cleaner look
+  - Displays as `// 󱑈 HH:MM` at end of prompt line
+
+### Removed
+
+- **Kitty Tab Bar**: Hidden redundant bottom tab bar
+  - Tab information already visible in prompt
+  - Cleaner terminal appearance
+
+---
+
 ## [2.7.0] - 2026-01-11
 
 ### Added
 
-- **Starship Right-Aligned Time**: Time clock now appears on the right side of prompt
+- **Starship Time Display**: Time clock now appears in prompt
   - Displays as `󱑈 HH:MM` format
   - Uses Tokyo Night cyan color scheme
 
@@ -160,7 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/reisset/mybash/compare/v2.7.0...HEAD
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.7.1...HEAD
+[2.7.1]: https://github.com/reisset/mybash/compare/v2.7.0...v2.7.1
 [2.7.0]: https://github.com/reisset/mybash/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/reisset/mybash/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/reisset/mybash/compare/v2.3.0...v2.5.0
