@@ -23,6 +23,38 @@ SERVER_MODE=false
 USE_SUDO=false
 ARCH=$(uname -m)
 
+# Distro Detection
+detect_distro() {
+    if [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        if [[ "$ID" == "arch" || "$ID_LIKE" == *"arch"* ]]; then
+            echo "arch"
+        elif [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" == *"debian"* || "$ID_LIKE" == *"ubuntu"* ]]; then
+            echo "debian"
+        else
+            echo "unknown"
+        fi
+    else
+        echo "unknown"
+    fi
+}
+DISTRO=$(detect_distro)
+
+# Package Manager Abstraction
+pkg_update() {
+    case "$DISTRO" in
+        arch) sudo pacman -Sy ;;
+        debian) sudo apt update ;;
+    esac
+}
+
+pkg_install() {
+    case "$DISTRO" in
+        arch) sudo pacman -S --noconfirm --needed "$@" ;;
+        debian) sudo apt install -y "$@" ;;
+    esac
+}
+
 # Helper Functions
 log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
@@ -94,6 +126,20 @@ else
     log_warn "Architecture $ARCH might require manual steps for some tools."
 fi
 
+# Log detected distro
+case "$DISTRO" in
+    arch)
+        log_info "Detected Distribution: Arch-based (pacman)"
+        ;;
+    debian)
+        log_info "Detected Distribution: Debian/Ubuntu (apt)"
+        ;;
+    *)
+        log_warn "Unrecognized distribution. Will use GitHub-only installations."
+        log_warn "System packages will be skipped."
+        ;;
+esac
+
 # Check Sudo
 if confirm "Do you want to use sudo for system-wide installs (recommended)?"; then
     if sudo -v; then
@@ -106,9 +152,12 @@ fi
 
 # Deps
 if ! command -v curl &> /dev/null || ! command -v unzip &> /dev/null || ! command -v bzip2 &> /dev/null; then
-    if $USE_SUDO;
-        then
-        sudo apt update && sudo apt install -y curl unzip fontconfig git bzip2 tar wget
+    if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
+        pkg_update
+        case "$DISTRO" in
+            arch) pkg_install curl unzip fontconfig git bzip2 tar wget base-devel ;;
+            debian) pkg_install curl unzip fontconfig git bzip2 tar wget ;;
+        esac
     else
         log_warn "Ensure 'curl', 'unzip', 'git', 'fontconfig', 'bzip2', 'tar', and 'wget' are installed."
     fi
@@ -329,52 +378,64 @@ fi
 # Yazi
 if ! command -v yazi &> /dev/null; then
     if confirm "Install Yazi?"; then
-        # yazi-x86_64-unknown-linux-gnu.zip
-        install_from_github "sxyazi/yazi" "yazi" "$ARCH.*linux-gnu.zip"
+        if $USE_SUDO && [[ "$DISTRO" == "arch" ]]; then
+            pkg_install yazi
+        else
+            # yazi-x86_64-unknown-linux-gnu.zip
+            install_from_github "sxyazi/yazi" "yazi" "$ARCH.*linux-gnu.zip"
+        fi
     fi
 fi
 
 # Eza, Rg, Bat, FZF
-if $USE_SUDO; then
-    # Eza (needs repo setup usually, but checking apt first)
-    if ! command -v eza &> /dev/null; then
-        log_info "Installing Eza setup..."
-        sudo mkdir -p /etc/apt/keyrings
+if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
+    case "$DISTRO" in
+        arch)
+            # Arch: All these tools are in official repos
+            pkg_install eza ripgrep bat fzf
+            ;;
+        debian)
+            # Eza (needs repo setup on Debian)
+            if ! command -v eza &> /dev/null; then
+                log_info "Installing Eza setup..."
+                sudo mkdir -p /etc/apt/keyrings
 
-        # Download GPG key to temporary location first
-        eza_gpg_tmp="/tmp/eza_gierens.asc"
-        if ! wget --tries=5 \
-                  --waitretry=3 \
-                  --timeout=10 \
-                  -qO "$eza_gpg_tmp" \
-                  https://raw.githubusercontent.com/eza-community/eza/main/deb.asc; then
-            log_error "Failed to download eza GPG key after retries"
-        else
-            # Import and verify the key
-            sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg --yes < "$eza_gpg_tmp"
-            rm -f "$eza_gpg_tmp"
+                # Download GPG key to temporary location first
+                eza_gpg_tmp="/tmp/eza_gierens.asc"
+                if ! wget --tries=5 \
+                          --waitretry=3 \
+                          --timeout=10 \
+                          -qO "$eza_gpg_tmp" \
+                          https://raw.githubusercontent.com/eza-community/eza/main/deb.asc; then
+                    log_error "Failed to download eza GPG key after retries"
+                else
+                    # Import and verify the key
+                    sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg --yes < "$eza_gpg_tmp"
+                    rm -f "$eza_gpg_tmp"
 
-            echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
-            sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
-            sudo apt update
-            sudo apt install -y eza
-        fi
-    fi
-    
-    # Common tools
-    sudo apt install -y ripgrep bat fzf
-    
-    # Symlink batcat to bat if needed
-    if command -v batcat &> /dev/null && ! command -v bat &> /dev/null; then
-        mkdir -p "$LOCAL_BIN"
-        ln -sf /usr/bin/batcat "$LOCAL_BIN/bat"
-    fi
+                    echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
+                    sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+                    sudo apt update
+                    sudo apt install -y eza
+                fi
+            fi
+
+            # Common tools
+            sudo apt install -y ripgrep bat fzf
+
+            # Symlink batcat to bat if needed (Debian uses batcat due to name conflict)
+            if command -v batcat &> /dev/null && ! command -v bat &> /dev/null; then
+                mkdir -p "$LOCAL_BIN"
+                ln -sf /usr/bin/batcat "$LOCAL_BIN/bat"
+            fi
+            ;;
+    esac
 else
-    # Local fallbacks
+    # Local fallbacks (GitHub binaries)
     [ ! -x "$LOCAL_BIN/eza" ] && install_from_github "eza-community/eza" "eza" "$ARCH.*linux-gnu.tar.gz"
     [ ! -x "$LOCAL_BIN/rg" ] && install_from_github "BurntSushi/ripgrep" "rg" "linux-musl.tar.gz"
     [ ! -x "$LOCAL_BIN/bat" ] && install_from_github "sharkdp/bat" "bat" "$ARCH.*linux-musl.tar.gz"
-    
+
     if [ ! -x "$LOCAL_BIN/fzf" ]; then
         log_info "Installing FZF locally..."
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
@@ -389,28 +450,42 @@ fi
 
 log_info "Installing Modern CLI Tools (Learning-First)..."
 
-if $USE_SUDO; then
-    # APT Installations (where available)
-    # Note: git-delta not included - uses GitHub fallback for broader compatibility
-    sudo apt install -y tealdeer btop fd-find micro
-    
-    # Symlink fd if installed via apt
-    if command -v fdfind &> /dev/null; then
-        ln -sf "$(which fdfind)" "$LOCAL_BIN/fd"
-    fi
+if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
+    case "$DISTRO" in
+        arch)
+            # Arch: Most tools are in official repos
+            pkg_install tealdeer btop fd micro zoxide glow gping dust git-delta procs
+            if ! $SERVER_MODE; then
+                pkg_install lazygit
+            fi
+            ;;
+        debian)
+            # APT Installations (where available)
+            # Note: git-delta not included - uses GitHub fallback for broader compatibility
+            sudo apt install -y tealdeer btop fd-find micro
 
-    # GPU Monitor (NVTOP)
+            # Symlink fd if installed via apt (Debian uses fdfind)
+            if command -v fdfind &> /dev/null; then
+                ln -sf "$(which fdfind)" "$LOCAL_BIN/fd"
+            fi
+            ;;
+    esac
+
+    # GPU Monitor (NVTOP) - both distros have this
     if ! $SERVER_MODE; then
         if lspci 2>/dev/null | grep -iE 'vga|3d|display' | grep -qvE 'intel.*integrated'; then
             if confirm "Discrete GPU detected. Install nvtop?"; then
-                sudo apt install -y nvtop
+                pkg_install nvtop
             fi
         fi
     fi
 fi
 
+# GitHub fallbacks for tools not installed via package manager
 # Zoxide
-[ ! -x "$LOCAL_BIN/zoxide" ] && install_from_github "ajeetdsouza/zoxide" "zoxide" "$ARCH.*linux-musl.tar.gz"
+if ! command -v zoxide &> /dev/null; then
+    install_from_github "ajeetdsouza/zoxide" "zoxide" "$ARCH.*linux-musl.tar.gz"
+fi
 
 # Glow
 if ! command -v glow &> /dev/null; then
@@ -433,7 +508,9 @@ if ! command -v tldr &> /dev/null; then
 fi
 
 # Dust
-[ ! -x "$LOCAL_BIN/dust" ] && install_from_github "bootandy/dust" "dust" "$ARCH.*linux-musl.tar.gz"
+if ! command -v dust &> /dev/null; then
+    install_from_github "bootandy/dust" "dust" "$ARCH.*linux-musl.tar.gz"
+fi
 
 # FD (Fallback)
 if ! command -v fd &> /dev/null && ! command -v fdfind &> /dev/null; then
@@ -458,7 +535,9 @@ if ! $SERVER_MODE; then
 fi
 
 # Procs
-[ ! -x "$LOCAL_BIN/procs" ] && install_from_github "dalance/procs" "procs" "$ARCH-linux.zip"
+if ! command -v procs &> /dev/null; then
+    install_from_github "dalance/procs" "procs" "$ARCH-linux.zip"
+fi
 
 # Copy documentation and scripts to local share for aliases
 mkdir -p "$HOME/.local/share/mybash"

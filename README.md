@@ -1,6 +1,6 @@
 # MyBash V2
 
-An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
+An opinionated, high-performance Bash setup for Ubuntu/Debian and Arch-based distros (CachyOS, EndeavourOS, Manjaro). I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
 
 ## Preview
 <img width="2943" height="1841" alt="Screenshot from 2025-12-23 15-16-16" src="https://github.com/user-attachments/assets/210577bd-1589-49cc-ad30-22dbae6a0f02" />
@@ -20,7 +20,7 @@ An opinionated, high-performance Bash setup for Ubuntu/Debian. I built this to h
 Don't just run random scripts from the internet. Read the code first.
 
 1. **Clone & Inspect:**
-    *(You may need to `sudo apt install git` first)*
+    *(You may need to install git first: `sudo apt install git` on Debian/Ubuntu or `sudo pacman -S git` on Arch)*
     ```bash
     git clone https://github.com/reisset/mybash.git
     cd mybash
