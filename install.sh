@@ -454,7 +454,12 @@ if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
     case "$DISTRO" in
         arch)
             # Arch: Most tools are in official repos
-            pkg_install tealdeer btop fd micro zoxide glow gping dust git-delta procs
+            # Skip tealdeer if any tldr implementation is already installed (avoids conflict)
+            arch_packages="btop fd micro zoxide glow gping dust git-delta procs"
+            if ! command -v tldr &> /dev/null; then
+                arch_packages="tealdeer $arch_packages"
+            fi
+            pkg_install $arch_packages
             if ! $SERVER_MODE; then
                 pkg_install lazygit
             fi
@@ -462,7 +467,12 @@ if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
         debian)
             # APT Installations (where available)
             # Note: git-delta not included - uses GitHub fallback for broader compatibility
-            sudo apt install -y tealdeer btop fd-find micro
+            # Skip tealdeer if any tldr implementation is already installed (avoids conflict)
+            deb_packages="btop fd-find micro"
+            if ! command -v tldr &> /dev/null; then
+                deb_packages="tealdeer $deb_packages"
+            fi
+            sudo apt install -y $deb_packages
 
             # Symlink fd if installed via apt (Debian uses fdfind)
             if command -v fdfind &> /dev/null; then
