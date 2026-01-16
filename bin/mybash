@@ -197,6 +197,7 @@ run_doctor() {
     check_tool "fd" && check_pass "fd (fast find)" || check_warn "fd not found"
     check_tool "btop" && check_pass "btop (system monitor)" || check_warn "btop not found"
     check_tool "delta" && check_pass "delta (git diff)" || check_warn "delta not found"
+    check_tool "gh" && check_pass "gh (GitHub CLI)" || check_warn "gh not found"
 
     echo ""
     check_info "Found $TOOLS_FOUND/$TOOLS_TOTAL modern tools"

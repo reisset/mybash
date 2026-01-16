@@ -483,7 +483,7 @@ if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
             fi
             pkg_install $arch_packages
             if ! $SERVER_MODE; then
-                pkg_install lazygit
+                pkg_install lazygit github-cli
             fi
             ;;
         debian)
@@ -571,6 +571,13 @@ if ! command -v procs &> /dev/null; then
     install_from_github "dalance/procs" "procs" "$ARCH-linux.zip"
 fi
 
+# GitHub CLI (gh) - Desktop only
+if ! $SERVER_MODE; then
+    if ! command -v gh &> /dev/null; then
+        install_from_github "cli/cli" "gh" "gh_.*_linux_$(get_github_arch)\.tar\.gz"
+    fi
+fi
+
 # Copy documentation and scripts to local share for aliases
 mkdir -p "$HOME/.local/share/mybash"
 cp "$REPO_DIR/docs/TOOLS.md" "$HOME/.local/share/mybash/TOOLS.md"
@@ -655,7 +662,7 @@ fi
 echo "" >> "$MANIFEST_FILE"
 echo "# Installed Binaries" >> "$MANIFEST_FILE"
 for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
-              btop dust fd delta lazygit procs \
+              btop dust fd delta lazygit procs gh \
               glow gping tldr micro mybash; do
     if [ -x "$LOCAL_BIN/$binary" ]; then
         echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"

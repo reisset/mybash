@@ -38,6 +38,7 @@ MyBash V2.3 adds powerful modern tools but **does not replace** the originals.
 | :--- | :--- | :--- |
 | **tealdeer** | `tldr` | Practical examples for any command (instead of long man pages). |
 | **lazygit** | `lg` | Incredible TUI for managing git repos, commits, and branches. |
+| **gh** | `gh` | GitHub CLI for PRs, issues, actions, and repo management. |
 | **delta** | `git diff` | Syntax highlighting and side-by-side diffs for Git. |
 | **glow** | `glow` | Render markdown in the terminal. |
 | **gping** | `gping` | Ping with a live graph. |
