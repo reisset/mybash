@@ -2,6 +2,13 @@
 
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
+#
+# Version: 2.7.2
+# Changelog:
+#   2.7.2 - Add KDE Plasma support for setting Kitty as default terminal
+#   2.7.1 - Time display and cleaner UI
+#   2.7.0 - Starship enhancements and cleaner welcome
+#   2.6.0 - Kitty kittens integration and clean ASCII art
 
 set -e
 
@@ -346,6 +353,21 @@ if ! $SERVER_MODE; then
                 # Clear exec-arg to avoid issues with some shortcuts expecting specific args
                 gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''
                 log_info "Kitty set as default via GNOME settings."
+            fi
+        fi
+
+        # KDE Plasma: Set default terminal via kdeglobals
+        if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]]; then
+            if confirm_no "Set Kitty as default terminal (KDE Plasma)?"; then
+                # Try kwriteconfig6 (Plasma 6) first, fall back to kwriteconfig5 (Plasma 5)
+                if command -v kwriteconfig6 &> /dev/null; then
+                    kwriteconfig6 --file kdeglobals --group General --key TerminalApplication kitty
+                    kwriteconfig6 --file kdeglobals --group General --key TerminalService kitty.desktop
+                elif command -v kwriteconfig5 &> /dev/null; then
+                    kwriteconfig5 --file kdeglobals --group General --key TerminalApplication kitty
+                    kwriteconfig5 --file kdeglobals --group General --key TerminalService kitty.desktop
+                fi
+                log_info "Kitty set as default terminal for KDE Plasma."
             fi
         fi
     fi

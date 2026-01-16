@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.2] - 2026-01-15
+
+### Added
+
+- **KDE Plasma Support**: Kitty can now be set as default terminal on KDE Plasma
+  - Supports both Plasma 5 (`kwriteconfig5`) and Plasma 6 (`kwriteconfig6`)
+  - Tested on CachyOS with KDE Wayland
+
+### Fixed
+
+- **Arch/CachyOS Terminal Default**: Previously only Debian (`update-alternatives`) and GNOME (`gsettings`) were supported
+
+---
+
 ## [2.7.1] - 2026-01-11
 
 ### Changed
@@ -176,7 +190,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/reisset/mybash/compare/v2.7.1...HEAD
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.7.2...HEAD
+[2.7.2]: https://github.com/reisset/mybash/compare/v2.7.1...v2.7.2
 [2.7.1]: https://github.com/reisset/mybash/compare/v2.7.0...v2.7.1
 [2.7.0]: https://github.com/reisset/mybash/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/reisset/mybash/compare/v2.5.0...v2.6.0
