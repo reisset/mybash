@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.1] - 2026-01-16
+
+### Fixed
+
+- **GitHub CLI (gh) installation**: Fixed architecture detection - `x86_64` now correctly maps to `amd64` for GitHub release downloads
+- **KDE Plasma Ctrl+Alt+T shortcut**: Now explicitly registers kitty shortcut in `kglobalshortcutsrc` (was only disabling Konsole's, not adding Kitty's)
+
+---
+
 ## [2.8.0] - 2026-01-16
 
 ### Added
