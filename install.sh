@@ -3,8 +3,9 @@
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
 #
-# Version: 2.8.1
+# Version: 2.8.2
 # Changelog:
+#   2.8.2 - Fix KDE shortcut: write to [services][kitty.desktop] not [kitty.desktop]
 #   2.8.1 - Fix gh install (x86_64→amd64) and KDE Ctrl+Alt+T shortcut registration
 #   2.8.0 - Add GitHub CLI (gh), improve KDE Plasma support
 #   2.7.2 - Add KDE Plasma support for setting Kitty as default terminal
@@ -390,7 +391,7 @@ DESKTOP
                     $kwrite_cmd --file kglobalshortcutsrc --group "services" --group "org.kde.konsole.desktop" --key "_launch" "none,none,Konsole"
 
                     # Register Kitty's Ctrl+Alt+T shortcut
-                    $kwrite_cmd --file kglobalshortcutsrc --group "kitty.desktop" --key "_launch" "Ctrl+Alt+T,Ctrl+Alt+T,Kitty"
+                    $kwrite_cmd --file kglobalshortcutsrc --group "services" --group "kitty.desktop" --key "_launch" "Ctrl+Alt+T,Ctrl+Alt+T,Kitty"
 
                     log_info "Kitty set as default terminal for KDE Plasma."
                     log_info "Log out and back in for Ctrl+Alt+T shortcut to take effect."
