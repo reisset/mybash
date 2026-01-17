@@ -3,8 +3,9 @@
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
 #
-# Version: 2.8.2
+# Version: 2.8.3
 # Changelog:
+#   2.8.3 - Fix KDE Ctrl+Alt+T: override konsole.desktop to stop it stealing shortcut
 #   2.8.2 - Fix KDE shortcut: write to [services][kitty.desktop] not [kitty.desktop]
 #   2.8.1 - Fix gh install (x86_64→amd64) and KDE Ctrl+Alt+T shortcut registration
 #   2.8.0 - Add GitHub CLI (gh), improve KDE Plasma support
@@ -387,11 +388,26 @@ DESKTOP
                     # Set correct Exec path
                     sed -i "s|Exec=kitty|Exec=$kitty_path|g" ~/.local/share/kglobalaccel/kitty.desktop
 
-                    # Disable Konsole's Ctrl+Alt+T shortcut
+                    # Create local override of konsole.desktop to remove its Ctrl+Alt+T shortcut
+                    # This prevents konsole from re-claiming the shortcut on login
+                    cat > ~/.local/share/applications/org.kde.konsole.desktop << 'KONSOLE'
+[Desktop Entry]
+Type=Application
+Name=Konsole
+Exec=konsole
+Icon=utilities-terminal
+X-KDE-Shortcuts=
+KONSOLE
+
+                    # Disable Konsole's Ctrl+Alt+T shortcut in kglobalshortcutsrc
                     $kwrite_cmd --file kglobalshortcutsrc --group "services" --group "org.kde.konsole.desktop" --key "_launch" "none,none,Konsole"
 
                     # Register Kitty's Ctrl+Alt+T shortcut
                     $kwrite_cmd --file kglobalshortcutsrc --group "services" --group "kitty.desktop" --key "_launch" "Ctrl+Alt+T,Ctrl+Alt+T,Kitty"
+
+                    # Rebuild KDE caches to pick up changes
+                    update-desktop-database ~/.local/share/applications 2>/dev/null || true
+                    kbuildsycoca6 2>/dev/null || kbuildsycoca5 2>/dev/null || true
 
                     log_info "Kitty set as default terminal for KDE Plasma."
                     log_info "Log out and back in for Ctrl+Alt+T shortcut to take effect."
