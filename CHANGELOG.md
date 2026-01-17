@@ -18,9 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **KDE Plasma Ctrl+Alt+T shortcut**: Now properly binds Ctrl+Alt+T to kitty
-  - Adds `X-KDE-Shortcuts=Ctrl+Alt+T` to kitty.desktop
+  - Creates `~/.local/share/kglobalaccel/kitty.desktop` with shortcut binding
   - Disables Konsole's shortcut claim in kglobalshortcutsrc
   - Requires logout/login to take effect
+
+### Changed
+
+- **DE auto-detection**: Only shows relevant default terminal prompt for detected DE
+  - GNOME prompt only shown when `XDG_CURRENT_DESKTOP` contains "GNOME"
+  - KDE prompt only shown when `XDG_CURRENT_DESKTOP` contains "KDE"
 
 ---
 
