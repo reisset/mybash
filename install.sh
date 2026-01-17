@@ -314,7 +314,14 @@ if ! $SERVER_MODE; then
                 sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty.desktop
                 # Ensure Exec path is correct
                 sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/bin/kitty|g" ~/.local/share/applications/kitty.desktop
-                
+
+                # KDE Plasma: Add Ctrl+Alt+T shortcut to kitty.desktop
+                if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]]; then
+                    if ! grep -q "X-KDE-Shortcuts" ~/.local/share/applications/kitty.desktop; then
+                        sed -i '/^\[Desktop Entry\]/a X-KDE-Shortcuts=Ctrl+Alt+T' ~/.local/share/applications/kitty.desktop
+                    fi
+                fi
+
                 log_info "Kitty installed successfully."
                 rm -f "$kitty_installer"
             else
@@ -359,15 +366,24 @@ if ! $SERVER_MODE; then
         # KDE Plasma: Set default terminal via kdeglobals
         if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]]; then
             if confirm_no "Set Kitty as default terminal (KDE Plasma)?"; then
-                # Try kwriteconfig6 (Plasma 6) first, fall back to kwriteconfig5 (Plasma 5)
+                local kwrite_cmd=""
                 if command -v kwriteconfig6 &> /dev/null; then
-                    kwriteconfig6 --file kdeglobals --group General --key TerminalApplication kitty
-                    kwriteconfig6 --file kdeglobals --group General --key TerminalService kitty.desktop
+                    kwrite_cmd="kwriteconfig6"
                 elif command -v kwriteconfig5 &> /dev/null; then
-                    kwriteconfig5 --file kdeglobals --group General --key TerminalApplication kitty
-                    kwriteconfig5 --file kdeglobals --group General --key TerminalService kitty.desktop
+                    kwrite_cmd="kwriteconfig5"
                 fi
-                log_info "Kitty set as default terminal for KDE Plasma."
+
+                if [[ -n "$kwrite_cmd" ]]; then
+                    # Set default terminal application
+                    $kwrite_cmd --file kdeglobals --group General --key TerminalApplication kitty
+                    $kwrite_cmd --file kdeglobals --group General --key TerminalService kitty.desktop
+
+                    # Disable Konsole's Ctrl+Alt+T shortcut claim
+                    $kwrite_cmd --file kglobalshortcutsrc --group org.kde.konsole.desktop --key "_launch" "none,none,Konsole"
+
+                    log_info "Kitty set as default terminal for KDE Plasma."
+                    log_info "Log out and back in for Ctrl+Alt+T shortcut to take effect."
+                fi
             fi
         fi
     fi

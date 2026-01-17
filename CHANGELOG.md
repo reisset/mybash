@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Skipped in `--server` mode (desktop-only tool)
   - Installs via pacman on Arch, GitHub release on Debian/unknown
 
+### Fixed
+
+- **KDE Plasma Ctrl+Alt+T shortcut**: Now properly binds Ctrl+Alt+T to kitty
+  - Adds `X-KDE-Shortcuts=Ctrl+Alt+T` to kitty.desktop
+  - Disables Konsole's shortcut claim in kglobalshortcutsrc
+  - Requires logout/login to take effect
+
 ---
 
 ## [2.7.2] - 2026-01-15
