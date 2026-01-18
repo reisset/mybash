@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **GNOME Ctrl+Alt+T shortcut**: Fixed gsettings schema name - use `custom-keybinding` (singular) for relocatable schema, not `custom-keybindings` (plural)
+- **GNOME Ctrl+Alt+T shortcut (Wayland)**: Use `gtk-launch kitty` instead of direct path - direct paths don't work in GNOME keybindings on Wayland
 
 ---
 
