@@ -3,8 +3,9 @@
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
 #
-# Version: 2.8.4
+# Version: 2.8.5
 # Changelog:
+#   2.8.5 - Fix missing CYAN color, add GNOME Ctrl+Alt+T shortcut support
 #   2.8.4 - Fix CachyOS detection and glow GitHub fallback architecture
 #   2.8.3 - Fix KDE Ctrl+Alt+T: override konsole.desktop to stop it stealing shortcut
 #   2.8.2 - Fix KDE shortcut: write to [services][kitty.desktop] not [kitty.desktop]
@@ -28,6 +29,7 @@ mkdir -p "$LOCAL_BIN"
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # State
@@ -351,13 +353,32 @@ if ! $SERVER_MODE; then
             fi
         fi
 
-        # GNOME: Set via gsettings
+        # GNOME: Set via gsettings and configure Ctrl+Alt+T shortcut
         if command -v gsettings &> /dev/null && [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
             if confirm_no "Set Kitty as default terminal (GNOME)?"; then
                 gsettings set org.gnome.desktop.default-applications.terminal exec "$kitty_path"
                 # Clear exec-arg to avoid issues with some shortcuts expecting specific args
                 gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''
+
+                # Disable built-in terminal shortcut
+                gsettings set org.gnome.settings-daemon.plugins.media-keys terminal "[]" 2>/dev/null || true
+
+                # Get existing custom keybindings and append kitty
+                existing=$(gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings 2>/dev/null || echo "@as []")
+                if [[ "$existing" == "@as []" ]]; then
+                    gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/']"
+                elif [[ "$existing" != *"kitty"* ]]; then
+                    new_bindings="${existing%]}, '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/']"
+                    gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "$new_bindings"
+                fi
+
+                # Configure the kitty shortcut
+                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ name "Kitty Terminal"
+                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ command "$kitty_path"
+                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ binding "<Control><Alt>t"
+
                 log_info "Kitty set as default via GNOME settings."
+                log_info "Ctrl+Alt+T shortcut configured for Kitty."
             fi
         fi
 
