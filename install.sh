@@ -373,9 +373,9 @@ if ! $SERVER_MODE; then
                 fi
 
                 # Configure the kitty shortcut
-                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ name "Kitty Terminal"
-                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ command "$kitty_path"
-                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybindings:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ binding "<Control><Alt>t"
+                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ name "Kitty Terminal"
+                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ command "$kitty_path"
+                gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/ binding "<Control><Alt>t"
 
                 log_info "Kitty set as default via GNOME settings."
                 log_info "Ctrl+Alt+T shortcut configured for Kitty."
