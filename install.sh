@@ -3,8 +3,9 @@
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
 #
-# Version: 2.8.3
+# Version: 2.8.4
 # Changelog:
+#   2.8.4 - Fix CachyOS detection and glow GitHub fallback architecture
 #   2.8.3 - Fix KDE Ctrl+Alt+T: override konsole.desktop to stop it stealing shortcut
 #   2.8.2 - Fix KDE shortcut: write to [services][kitty.desktop] not [kitty.desktop]
 #   2.8.1 - Fix gh install (x86_64→amd64) and KDE Ctrl+Alt+T shortcut registration
@@ -38,7 +39,7 @@ ARCH=$(uname -m)
 detect_distro() {
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
-        if [[ "$ID" == "arch" || "$ID_LIKE" == *"arch"* ]]; then
+        if [[ "$ID" == "arch" || "$ID" == "cachyos" || "$ID_LIKE" == *"arch"* ]]; then
             echo "arch"
         elif [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" == *"debian"* || "$ID_LIKE" == *"ubuntu"* ]]; then
             echo "debian"
@@ -563,9 +564,10 @@ if ! command -v zoxide &> /dev/null; then
     install_from_github "ajeetdsouza/zoxide" "zoxide" "$ARCH.*linux-musl.tar.gz"
 fi
 
-# Glow
+# Glow (uses x86_64/arm64 naming, not amd64)
 if ! command -v glow &> /dev/null; then
-    install_from_github "charmbracelet/glow" "glow" "Linux_$(get_github_arch)\.tar\.gz"
+    glow_arch=$(case "$ARCH" in x86_64) echo "x86_64" ;; aarch64) echo "arm64" ;; *) echo "$ARCH" ;; esac)
+    install_from_github "charmbracelet/glow" "glow" "Linux_${glow_arch}\.tar\.gz"
 fi
 
 # Gping
