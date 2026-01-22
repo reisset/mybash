@@ -123,6 +123,18 @@ if command -v gsettings &> /dev/null; then
     fi
 fi
 
+# Check if Kitty is set in COSMIC
+cosmic_shortcuts_dir="$HOME/.config/cosmic/com.system76.CosmicSettings.Shortcuts/v1"
+if [ -f "$cosmic_shortcuts_dir/system_actions" ]; then
+    if grep -qi "kitty" "$cosmic_shortcuts_dir/system_actions" 2>/dev/null; then
+        if confirm "Kitty is set in COSMIC settings. Restore defaults?"; then
+            rm -f "$cosmic_shortcuts_dir/system_actions"
+            rm -f "$cosmic_shortcuts_dir/custom"
+            log_info "Removed COSMIC customizations (Super+T restored, Super+Enter cleared)"
+        fi
+    fi
+fi
+
 # Step 5: Ask about installed binaries
 log_info "Step 5: Installed binaries in ~/.local/bin"
 echo ""

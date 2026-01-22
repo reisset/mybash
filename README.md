@@ -1,6 +1,6 @@
 # MyBash V2
 
-An opinionated, high-performance Bash setup for Ubuntu/Debian and Arch-based distros (CachyOS, EndeavourOS, Manjaro). I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
+An opinionated, high-performance Bash setup for Ubuntu/Debian, Arch-based distros (CachyOS, EndeavourOS, Manjaro), and Pop!_OS 24.04 (COSMIC desktop). I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
 
 ## Preview
 <img width="2943" height="1841" alt="Screenshot from 2025-12-23 15-16-16" src="https://github.com/user-attachments/assets/210577bd-1589-49cc-ad30-22dbae6a0f02" />

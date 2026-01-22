@@ -3,8 +3,9 @@
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
 #
-# Version: 2.8.5
+# Version: 2.8.6
 # Changelog:
+#   2.8.6 - Add COSMIC desktop support (Pop!_OS 24.04)
 #   2.8.5 - Fix missing CYAN color, add GNOME Ctrl+Alt+T shortcut support
 #   2.8.4 - Fix CachyOS detection and glow GitHub fallback architecture
 #   2.8.3 - Fix KDE Ctrl+Alt+T: override konsole.desktop to stop it stealing shortcut
@@ -434,6 +435,32 @@ KONSOLE
                     log_info "Kitty set as default terminal for KDE Plasma."
                     log_info "Log out and back in for Ctrl+Alt+T shortcut to take effect."
                 fi
+            fi
+        fi
+
+        # COSMIC Desktop: Set Kitty as default terminal with Super+Enter
+        if [[ "${XDG_CURRENT_DESKTOP,,}" == *"cosmic"* ]]; then
+            if confirm_no "Set Kitty as default terminal (COSMIC)?"; then
+                cosmic_shortcuts_dir="$HOME/.config/cosmic/com.system76.CosmicSettings.Shortcuts/v1"
+                mkdir -p "$cosmic_shortcuts_dir"
+
+                # Set Kitty as the terminal application
+                cat > "$cosmic_shortcuts_dir/system_actions" << EOF
+{
+    Terminal: "$kitty_path",
+}
+EOF
+
+                # Remap: Super+Enter = Terminal, Super+T = disabled
+                cat > "$cosmic_shortcuts_dir/custom" << 'EOF'
+{
+    (modifiers: [Super], key: "Return"): System(Terminal),
+    (modifiers: [Super], key: "t"): Disable,
+}
+EOF
+
+                log_info "Kitty set as default terminal for COSMIC."
+                log_info "Super+Enter launches Kitty. Super+T disabled."
             fi
         fi
     fi

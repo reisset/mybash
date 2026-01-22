@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.6] - 2026-01-22
+
+### Added
+
+- **COSMIC Desktop Support**: Full support for Pop!_OS 24.04's new COSMIC desktop
+  - Sets Kitty as default terminal via `~/.config/cosmic/com.system76.CosmicSettings.Shortcuts/v1/`
+  - Maps Super+Enter to launch Kitty
+  - Disables default Super+T shortcut (cosmic-term)
+  - Uninstaller restores COSMIC defaults
+
+---
+
 ## [2.8.2] - 2026-01-18
 
 ### Fixed
@@ -233,7 +245,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/reisset/mybash/compare/v2.8.0...HEAD
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.8.6...HEAD
+[2.8.6]: https://github.com/reisset/mybash/compare/v2.8.2...v2.8.6
+[2.8.2]: https://github.com/reisset/mybash/compare/v2.8.0...v2.8.2
 [2.8.0]: https://github.com/reisset/mybash/compare/v2.7.2...v2.8.0
 [2.7.2]: https://github.com/reisset/mybash/compare/v2.7.1...v2.7.2
 [2.7.1]: https://github.com/reisset/mybash/compare/v2.7.0...v2.7.1
