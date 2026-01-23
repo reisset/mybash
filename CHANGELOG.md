@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.8] - 2026-01-22
+
+### Fixed
+
+- **lazygit GitHub release pattern**: Fixed architecture in download URL - releases use `x86_64` not `amd64`
+
+---
+
+## [2.8.7] - 2026-01-22
+
+### Removed
+
+- **gping**: Removed due to GitHub release pattern incompatibility (used non-standard arch naming)
+
+---
+
 ## [2.8.6] - 2026-01-22
 
 ### Added
@@ -215,7 +231,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Modern CLI Toolset**: Integrated 12+ modern tools while preserving standard commands
   - Core: `zoxide`, `eza`, `bat`, `fzf`, `fd`, `ripgrep`, `delta`, `lazygit`
-  - System: `btop`, `dust`, `procs`, `glow`, `gping`
+  - System: `btop`, `dust`, `procs`, `glow`
   - Optional: `nvtop` (GPU monitoring)
 
 - **Kitty Terminal**: GPU-accelerated terminal with Tokyo Night theme
@@ -245,7 +261,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/reisset/mybash/compare/v2.8.6...HEAD
+[Unreleased]: https://github.com/reisset/mybash/compare/v2.8.8...HEAD
+[2.8.8]: https://github.com/reisset/mybash/compare/v2.8.7...v2.8.8
+[2.8.7]: https://github.com/reisset/mybash/compare/v2.8.6...v2.8.7
 [2.8.6]: https://github.com/reisset/mybash/compare/v2.8.2...v2.8.6
 [2.8.2]: https://github.com/reisset/mybash/compare/v2.8.0...v2.8.2
 [2.8.0]: https://github.com/reisset/mybash/compare/v2.7.2...v2.8.0

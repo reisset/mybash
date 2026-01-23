@@ -3,8 +3,10 @@
 # MyBash V2 Installer
 # Sets up Kitty, Starship, Yazi, and modern CLI tools.
 #
-# Version: 2.8.6
+# Version: 2.8.8
 # Changelog:
+#   2.8.8 - Fix lazygit GitHub release pattern (x86_64 not amd64)
+#   2.8.7 - Remove gping (release pattern incompatibility)
 #   2.8.6 - Add COSMIC desktop support (Pop!_OS 24.04)
 #   2.8.5 - Fix missing CYAN color, add GNOME Ctrl+Alt+T shortcut support
 #   2.8.4 - Fix CachyOS detection and glow GitHub fallback architecture
@@ -570,7 +572,7 @@ if $USE_SUDO && [[ "$DISTRO" != "unknown" ]]; then
         arch)
             # Arch: Most tools are in official repos
             # Skip tealdeer if any tldr implementation is already installed (avoids conflict)
-            arch_packages="btop fd micro zoxide glow gping dust git-delta procs"
+            arch_packages="btop fd micro zoxide glow dust git-delta procs"
             if ! command -v tldr &> /dev/null; then
                 arch_packages="tealdeer $arch_packages"
             fi
@@ -618,11 +620,6 @@ if ! command -v glow &> /dev/null; then
     install_from_github "charmbracelet/glow" "glow" "Linux_${glow_arch}\.tar\.gz"
 fi
 
-# Gping
-if ! command -v gping &> /dev/null; then
-    install_from_github "orf/gping" "gping" "Linux-musl-$(get_github_arch)\.tar\.gz"
-fi
-
 # Btop
 if ! command -v btop &> /dev/null; then
     install_from_github "aristocratos/btop" "btop" "$ARCH.*linux-musl.tbz"
@@ -656,7 +653,7 @@ fi
 # Lazygit
 if ! $SERVER_MODE; then
     if ! command -v lazygit &> /dev/null; then
-        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_$(get_github_arch)\.tar\.gz"
+        install_from_github "jesseduffield/lazygit" "lazygit" "lazygit_.*_linux_$ARCH\.tar\.gz"
     fi
 fi
 
@@ -757,7 +754,7 @@ echo "" >> "$MANIFEST_FILE"
 echo "# Installed Binaries" >> "$MANIFEST_FILE"
 for binary in eza bat rg fzf zoxide yazi starship kitty kitten \
               btop dust fd delta lazygit procs gh \
-              glow gping tldr micro mybash; do
+              glow tldr micro mybash; do
     if [ -x "$LOCAL_BIN/$binary" ]; then
         echo "binary:$LOCAL_BIN/$binary" >> "$MANIFEST_FILE"
     fi

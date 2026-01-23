@@ -41,7 +41,6 @@ MyBash V2.3 adds powerful modern tools but **does not replace** the originals.
 | **gh** | `gh` | GitHub CLI for PRs, issues, actions, and repo management. |
 | **delta** | `git diff` | Syntax highlighting and side-by-side diffs for Git. |
 | **glow** | `glow` | Render markdown in the terminal. |
-| **gping** | `gping` | Ping with a live graph. |
 | **micro** | `m`, `edit` | Modern, intuitive terminal text editor. |
 
 ### 4. Kitty Kittens (Terminal Eye Candy)
