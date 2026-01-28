@@ -1,3 +1,5 @@
+# This repo is now deprecated. Please use my TUI installer app for complete, distro-agnostic, bash configs that are essentially a mirror of this one, but allow for manual selection of features. [mypctools](https://github.com/reisset/mypctools). 
+
 # MyBash V2
 
 An opinionated, high-performance Bash setup for Ubuntu/Debian, Arch-based distros (CachyOS, EndeavourOS, Manjaro), and Pop!_OS 24.04 (COSMIC desktop). I built this to help me learn Linux without getting stuck in the past—it blends modern tools for speed with standard commands for muscle memory. **This project is inspired by @ChrisTitusTech Mybash**
